@@ -38,19 +38,42 @@ export async function oturumYenile(request: NextRequest) {
     },
   );
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  /**
+   * Oturum çerezi var mı?
+   *
+   * Supabase erişim jetonunu yenilerken yenileme jetonu tek kullanımlıktır
+   * ve döner. Aynı anda gelen isteklerden biri yarışı kaybedince getUser()
+   * geçici olarak "oturum yok" der. Bunu doğrudan girişe yönlendirmeye
+   * çevirirsek şu zincir oluşuyor:
+   *
+   *   /panel/urunler -> /panel/giris -> /panel
+   *
+   * Üç ayrı serverless çağrısı, ölçülen ~8.2 saniye. Kullanıcı da yanlış
+   * sayfada buluyor kendini.
+   *
+   * Bu yüzden: çerez varsa isteği GEÇİRİYORUZ. Yetki kontrolü zaten panel
+   * yerleşiminde de yapılıyor (fail-closed) — orada gerçekten oturum yoksa
+   * tek bir yönlendirme olur, zincir oluşmaz.
+   */
+  const oturumCereziVar = request.cookies
+    .getAll()
+    .some((c) => /^sb-.*-auth-token/.test(c.name));
 
-  const giriste = giristeMi;
+  let user = null;
+  try {
+    const sonuc = await supabase.auth.getUser();
+    user = sonuc.data.user;
+  } catch {
+    user = null;
+  }
 
-  if (!giriste && !user) {
+  if (!giristeMi && !user && !oturumCereziVar) {
     const url = request.nextUrl.clone();
     url.pathname = "/panel/giris";
     return NextResponse.redirect(url);
   }
 
-  if (giriste && user) {
+  if (giristeMi && user) {
     const url = request.nextUrl.clone();
     url.pathname = "/panel";
     return NextResponse.redirect(url);
