@@ -7,7 +7,9 @@
  * 4 ürün oluşturur. Görseller `scripts/demo-gorsel-hazirla.py` ile
  * tarayıcıdakiyle AYNI algoritmadan geçirilmiştir.
  */
-import "dotenv/config";
+import dotenv from "dotenv";
+dotenv.config({ path: [".env.local", ".env"], quiet: true });
+
 import fs from "node:fs";
 import path from "node:path";
 import postgres from "postgres";

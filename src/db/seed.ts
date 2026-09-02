@@ -1,4 +1,6 @@
-import "dotenv/config";
+import dotenv from "dotenv";
+dotenv.config({ path: [".env.local", ".env"], quiet: true });
+
 import { db } from "./index";
 import { categories, settings } from "./schema";
 import { slugify } from "../lib/slug";

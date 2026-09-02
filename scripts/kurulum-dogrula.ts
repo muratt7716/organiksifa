@@ -4,9 +4,12 @@
  * Supabase kurulduktan sonra çalıştır. Her adımı gerçekten dener; tahmin etmez.
  * Eksik olan her şey için ne yapman gerektiğini yazar.
  */
-import "dotenv/config";
+import dotenv from "dotenv";
 import postgres from "postgres";
 import { createClient } from "@supabase/supabase-js";
+
+// Next.js .env.local dosyasını kendiliğinden okur; betikler okumaz.
+dotenv.config({ path: [".env.local", ".env"], quiet: true });
 
 type Sonuc = { ad: string; durum: "ok" | "hata" | "uyari"; not: string };
 const sonuclar: Sonuc[] = [];
