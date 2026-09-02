@@ -3,6 +3,7 @@ import { ArrowRight, Leaf, MessageCircle, Truck } from "lucide-react";
 import { yayindakiUrunler, aktifKategoriler } from "@/lib/catalog";
 import { ayarlariGetir } from "@/lib/settings";
 import { UrunKarti } from "@/components/magaza/UrunKarti";
+import { HeroVitrin } from "@/components/magaza/HeroVitrin";
 import { ZeytinDali, Adacayi, Papatya, Damla } from "@/components/magaza/Botanik";
 import { fiyatBicimle, sayi } from "@/lib/price";
 import { organizationLd, websiteLd, itemListLd, jsonLd } from "@/lib/seo";
@@ -66,10 +67,18 @@ export default async function AnaSayfa() {
           <Damla className="absolute left-[8%] bottom-16 w-[60px] sm:w-[80px]" />
         </div>
 
-        <div className="mx-auto max-w-6xl px-4 py-20 sm:py-28 lg:py-36">
+        {/* 1024px'te iki kolon: metin solda, vitrin sağda.
+            Altında tek kolona düşer, vitrin metnin altına geçer. */}
+        <div
+          className="mx-auto max-w-6xl px-4 py-16 sm:py-20 lg:py-24 xl:py-28
+                     grid gap-12 lg:gap-10 xl:gap-16
+                     lg:grid-cols-[minmax(0,1fr)_340px] xl:grid-cols-[minmax(0,1fr)_420px]
+                     lg:items-center"
+        >
+          <div>
           <p className="text-sm text-yesil-700 mb-4">{ayar.siteSlogan}</p>
 
-          <h1 className="font-baslik text-[clamp(2.25rem,1rem+5vw,4.25rem)] leading-[1.05] max-w-[16ch]">
+          <h1 className="font-baslik leading-[1.05] max-w-[16ch] text-[clamp(2.1rem,1rem+4vw,3.9rem)]">
             <AydinlananBaslik metin="Doğanın kendi eczanesinden, sofrana." />
           </h1>
 
@@ -102,25 +111,29 @@ export default async function AnaSayfa() {
             )}
           </div>
 
-          {/* Niyet bazlı giriş kapıları — müşteri "ne için" diye arar. */}
-          {kategoriler.length > 0 && (
-            <nav aria-label="Kategoriler" className="mt-12">
-              <ul className="flex flex-wrap gap-2">
-                {kategoriler.map((k) => (
-                  <li key={k.slug}>
-                    <Link
-                      href={`/kategori/${k.slug}`}
-                      className="inline-flex items-center min-h-[44px] px-4 rounded-full
-                                 bg-notr-0 border border-notr-200 text-sm
-                                 hover:border-yesil-400 hover:text-yesil-700 transition-colors"
-                    >
-                      {k.ad}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          )}
+            {/* Niyet bazlı giriş kapıları — müşteri "ne için" diye arar. */}
+            {kategoriler.length > 0 && (
+              <nav aria-label="Kategoriler" className="mt-10">
+                <ul className="flex flex-wrap gap-2">
+                  {kategoriler.map((k) => (
+                    <li key={k.slug}>
+                      <Link
+                        href={`/kategori/${k.slug}`}
+                        className="inline-flex items-center min-h-[44px] px-4 rounded-full
+                                   bg-notr-0 border border-notr-200 text-sm
+                                   hover:border-yesil-400 hover:text-yesil-700 transition-colors"
+                      >
+                        {k.ad}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            )}
+          </div>
+
+          {/* Vitrin — öne çıkan ürünler kemer çerçevede sırayla döner */}
+          {vitrin.length > 0 && <HeroVitrin urunler={vitrin.slice(0, 5)} />}
         </div>
       </section>
 
