@@ -80,28 +80,24 @@ export function HeroVitrin({ urunler }: { urunler: KatalogUrunu[] }) {
             className="block group"
             aria-label={`${u.baslik} — ${fiyatBicimle(fiyat)}`}
           >
-            {/* Zemin BEYAZ ve görselin etrafında bol boşluk var.
-                Görsel çerçeveyi baştan başa doldurursa afiş gibi duruyor;
-                boşlukla çerçevelenince ürün fotoğrafı gibi okunuyor. */}
+            {/* Buraya yalnızca ürün fotoğrafı biçimindeki görseller gelir
+                (bkz. urunFotografiMi). Kare bir ürün çekimi kemeri
+                doldurduğunda ürünün kendisi görünür — afiş hissi olmaz. */}
             <div
               key={u.id}
               className="relative aspect-[4/5] bg-notr-0
                          animate-[belir_520ms_var(--ease-giris)_both]"
             >
               {u.kapakUrl && (
-                <div className="absolute inset-0 p-7 sm:p-9">
-                  <div className="relative w-full h-full">
-                    <Image
-                      src={u.kapakUrl}
-                      alt={u.kapakAlt || u.baslik}
-                      fill
-                      priority
-                      sizes="(max-width: 1024px) 340px, 420px"
-                      className="object-contain transition-transform duration-700
-                                 group-hover:scale-[1.04]"
-                    />
-                  </div>
-                </div>
+                <Image
+                  src={u.kapakUrl}
+                  alt={u.kapakAlt || u.baslik}
+                  fill
+                  priority
+                  sizes="(max-width: 1024px) 340px, 420px"
+                  className="object-cover transition-transform duration-700
+                             group-hover:scale-[1.04]"
+                />
               )}
 
               {/* Rozet kemerin kavisinin ALTINDA durmalı; yukarıda kalırsa

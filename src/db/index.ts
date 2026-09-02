@@ -63,4 +63,20 @@ export const db: Db = new Proxy({} as Db, {
   },
 });
 
+/**
+ * Önbellekteki bağlantıyı atar; bir sonraki sorgu yenisini kurar.
+ *
+ * Serverless'te donmuş bir örneğin bağlantısı havuz tarafından kapatılmış
+ * olabilir. Bu durumda sorgu yanıt vermez ve o örnek KALICI olarak bozulur
+ * — her istek asılı kalır. Zaman aşımı yakalandığında bu çağrılır ve
+ * örnek kendini onarır.
+ */
+export function baglantiyiSifirla() {
+  const eski = globalForDb.__osClient;
+  globalForDb.__osDb = undefined;
+  globalForDb.__osClient = undefined;
+  // Kapatmayı bekleme: ölü bağlantıda close() de asılı kalabilir.
+  void eski?.end({ timeout: 1 }).catch(() => {});
+}
+
 export { schema };

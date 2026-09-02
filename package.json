@@ -15,6 +15,7 @@
     "dogrula": "tsx scripts/kurulum-dogrula.ts",
     "sql:dogrula": "tsx scripts/sql-dogrula.ts",
     "temizle": "tsx scripts/test-verisi-temizle.ts",
+    "urun:yukle": "tsx scripts/urun-yukle.ts",
     "demo:db": "tsx scripts/demo-db.ts",
     "demo:yukle": "cross-env DATABASE_URL=postgresql://postgres@127.0.0.1:5433/postgres tsx scripts/demo-hazirla.ts",
     "demo": "cross-env DEMO_MODU=1 DATABASE_URL=postgresql://postgres@127.0.0.1:5433/postgres next dev",

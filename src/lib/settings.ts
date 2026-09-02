@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { settings } from "@/db/schema";
 import { sayi } from "./price";
+import { sureliVeyaYedek } from "./db-sure";
 
 export type Ayarlar = typeof settings.$inferSelect;
 
@@ -32,12 +33,10 @@ export const VARSAYILAN_AYAR: Ayarlar = {
 };
 
 export async function ayarlariGetir(): Promise<Ayarlar> {
-  try {
+  return sureliVeyaYedek(async () => {
     const [satir] = await db.select().from(settings).where(eq(settings.id, 1));
     return satir ?? VARSAYILAN_AYAR;
-  } catch {
-    return VARSAYILAN_AYAR;
-  }
+  }, VARSAYILAN_AYAR);
 }
 
 /** Kargo hesabı için sayıya çevrilmiş ayar. */

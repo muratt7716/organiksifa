@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, Leaf, MessageCircle, Truck } from "lucide-react";
-import { yayindakiUrunler, aktifKategoriler } from "@/lib/catalog";
+import { yayindakiUrunler, aktifKategoriler, urunFotografiMi } from "@/lib/catalog";
 import { ayarlariGetir } from "@/lib/settings";
 import { UrunKarti } from "@/components/magaza/UrunKarti";
 import { HeroVitrin } from "@/components/magaza/HeroVitrin";
@@ -31,6 +31,12 @@ export default async function AnaSayfa() {
 
   const vitrin = oneCikanlar.length > 0 ? oneCikanlar : yeniler;
   const kargoLimit = ayar.kargoBedavaLimit ? sayi(ayar.kargoBedavaLimit) : null;
+
+  // Hero vitrini yalnızca ürün fotoğrafı biçimindeki kapakları alır.
+  const vitrinUrunleri = [...oneCikanlar, ...yeniler]
+    .filter(urunFotografiMi)
+    .filter((u, i, dizi) => dizi.findIndex((x) => x.id === u.id) === i)
+    .slice(0, 5);
 
   return (
     <>
@@ -132,8 +138,10 @@ export default async function AnaSayfa() {
             )}
           </div>
 
-          {/* Vitrin — öne çıkan ürünler kemer çerçevede sırayla döner */}
-          {vitrin.length > 0 && <HeroVitrin urunler={vitrin.slice(0, 5)} />}
+          {/* Vitrin — yalnızca ürün fotoğrafı biçimindeki kapaklar.
+              Dikey infografikler burada afiş gibi duruyor; onların yeri
+              katalog. Uygun görsel yoksa hero tek kolona düşer. */}
+          {vitrinUrunleri.length > 0 && <HeroVitrin urunler={vitrinUrunleri} />}
         </div>
       </section>
 

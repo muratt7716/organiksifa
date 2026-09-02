@@ -1,6 +1,7 @@
 import { eq, and, asc, desc, inArray } from "drizzle-orm";
 import { db } from "@/db";
 import { products, productImages, categories } from "@/db/schema";
+import { sureliVeyaYedek } from "./db-sure";
 
 export type KatalogUrunu = {
   id: string;
@@ -17,8 +18,26 @@ export type KatalogUrunu = {
   kategoriSlug: string | null;
   kapakUrl: string | null;
   kapakAlt: string | null;
+  kapakGenislik: number | null;
+  kapakYukseklik: number | null;
   zeminRengi: string;
 };
+
+/**
+ * Kapak görseli "ürün fotoğrafı" biçiminde mi?
+ *
+ * Hero vitrini yalnızca bunları gösterir. Dikey infografikler (afişler)
+ * hero'da ya reklam panosu ya da çerçevede duran kâğıt gibi görünüyor —
+ * hangi çerçeveleme denenirse denensin. Onların yeri katalog.
+ */
+export function urunFotografiMi(u: {
+  kapakGenislik: number | null;
+  kapakYukseklik: number | null;
+}): boolean {
+  if (!u.kapakGenislik || !u.kapakYukseklik) return false;
+  const oran = u.kapakGenislik / u.kapakYukseklik;
+  return oran >= 0.75 && oran <= 1.35;
+}
 
 const KAPAK_ALANLARI = {
   id: products.id,
@@ -35,6 +54,8 @@ const KAPAK_ALANLARI = {
   kategoriSlug: categories.slug,
   kapakUrl: productImages.url,
   kapakAlt: productImages.alt,
+  kapakGenislik: productImages.genislik,
+  kapakYukseklik: productImages.yukseklik,
   zeminRengi: productImages.zeminRengi,
 };
 
@@ -47,7 +68,7 @@ export async function yayindakiUrunler(opts?: {
   oneCikan?: boolean;
   limit?: number;
 }): Promise<KatalogUrunu[]> {
-  try {
+  return sureliVeyaYedek(async () => {
     const kosullar = [eq(products.yayinda, true)];
     if (opts?.kategoriSlug) kosullar.push(eq(categories.slug, opts.kategoriSlug));
     if (opts?.oneCikan) kosullar.push(eq(products.oneCikan, true));
@@ -65,13 +86,11 @@ export async function yayindakiUrunler(opts?: {
 
     const satirlar = opts?.limit ? await q.limit(opts.limit) : await q;
     return normalize(satirlar);
-  } catch {
-    return [];
-  }
+  }, []);
 }
 
 export async function urunDetay(slug: string) {
-  try {
+  return sureliVeyaYedek(async () => {
     const [urun] = await db
       .select()
       .from(products)
@@ -90,9 +109,7 @@ export async function urunDetay(slug: string) {
     ]);
 
     return { urun, gorseller, kategori: kategori[0] ?? null };
-  } catch {
-    return null;
-  }
+  }, null);
 }
 
 export async function benzerUrunler(
@@ -106,21 +123,21 @@ export async function benzerUrunler(
 }
 
 export async function aktifKategoriler() {
-  try {
-    return await db
-      .select()
-      .from(categories)
-      .where(eq(categories.aktif, true))
-      .orderBy(asc(categories.sira), asc(categories.ad));
-  } catch {
-    return [];
-  }
+  return sureliVeyaYedek(
+    () =>
+      db
+        .select()
+        .from(categories)
+        .where(eq(categories.aktif, true))
+        .orderBy(asc(categories.sira), asc(categories.ad)),
+    [] as (typeof categories.$inferSelect)[],
+  );
 }
 
 /** Sepet sayfası için — istemciden gelen id listesiyle güncel ürün bilgisi. */
 export async function sepetUrunleri(idler: string[]): Promise<KatalogUrunu[]> {
   if (idler.length === 0) return [];
-  try {
+  return sureliVeyaYedek(async () => {
     const satirlar = await db
       .select(KAPAK_ALANLARI)
       .from(products)
@@ -131,7 +148,5 @@ export async function sepetUrunleri(idler: string[]): Promise<KatalogUrunu[]> {
       )
       .where(and(inArray(products.id, idler), eq(products.yayinda, true)));
     return normalize(satirlar);
-  } catch {
-    return [];
-  }
+  }, []);
 }
