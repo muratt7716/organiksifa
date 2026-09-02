@@ -18,15 +18,21 @@ export class VeritabaniSuresiDoldu extends Error {
 }
 
 /**
- * Kısa tutuluyor. Ölçüm: panel sayfaları dönüşümlü olarak 1 sn / 6.2 sn
- * sürüyordu ve 6.2 sn'nin tamamı beklenen zaman aşımıydı.
+ * İlk deneme için sınır — canlıda ölçülen gerçek sürelere göre seçildi:
  *
- * Vercel istekleri birden fazla serverless örneğine dağıtıyor; donmuş bir
- * örneğin bağlantısını havuz çoktan kapatmış oluyor. O bağlantıyı beklemek
- * yerine hızlıca pes edip taze bağlantıyla YENİDEN denemek çok daha ucuz:
- * yeni bağlantı kurmak ölçülen ~600 ms.
+ *   sağlıklı sorgu ............  94 ms
+ *   taze bağlantı + sorgu ..... 604 ms
+ *
+ * Yani 900 ms, çalışan bir bağlantı için fazlasıyla yeterli. Ölü bir
+ * bağlantıyı bundan uzun beklemek saf kayıp: serverless'te donmuş örneğin
+ * bağlantısını havuz çoktan kapatmış oluyor ve yanıt hiç gelmiyor.
+ *
+ * 2500 ms denendi, panel sayfaları ~3.4 sn'ye oturdu (2.5 boşa + 0.9 gerçek).
  */
-const VARSAYILAN_MS = 2500;
+const VARSAYILAN_MS = 900;
+
+/** Yeniden denemede bağlantı sıfırdan kurulacağı için daha geniş. */
+const YENIDEN_DENEME_MS = 5000;
 
 export async function sureli<T>(
   islem: Promise<T>,
@@ -75,7 +81,7 @@ export async function sureliVeyaYedek<T>(
      * görünmesin diye. Bu deneme genelde ~600 ms sürer.
      */
     try {
-      return await sureli(islem(), ms + 1500);
+      return await sureli(islem(), YENIDEN_DENEME_MS);
     } catch (e2) {
       console.error("[db] taze bağlantıyla da okunamadı:", e2);
       return yedek;

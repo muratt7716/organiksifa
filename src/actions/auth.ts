@@ -114,13 +114,13 @@ export async function mevcutAdmin(): Promise<Admin | null> {
     try {
       const [profil] = await sureli(
         db.select().from(adminProfiles).where(eq(adminProfiles.id, user.id)),
-        4000,
+        1200,
       );
       if (profil) return { id: profil.id, ad: profil.ad, rol: profil.rol };
 
       const [yeni] = await sureli(
         db.insert(adminProfiles).values(yedek).returning(),
-        4000,
+        1200,
       );
       return { id: yeni.id, ad: yeni.ad, rol: yeni.rol };
     } catch (e) {
