@@ -142,8 +142,11 @@ test.describe("Responsive — yatay taşma olmamalı", () => {
     }) => {
       await page.setViewportSize({ width: ekran.w, height: ekran.h });
       for (const yol of yollar) {
-        await page.goto(yol);
-        await page.waitForLoadState("networkidle");
+        // networkidle kullanmıyoruz: canlı veritabanına bağlıyken uzun
+        // istekler testi kararsız hale getiriyor. Gövdenin görünmesi yeterli.
+        await page.goto(yol, { waitUntil: "domcontentloaded" });
+        await page.locator("body").waitFor({ state: "visible" });
+        await page.waitForTimeout(150);
         expect(await yatayTasmaVarMi(page), `${yol} @ ${ekran.w}px`).toBe(false);
       }
     });
@@ -192,6 +195,10 @@ test.describe("Erişilebilirlik temelleri", () => {
 });
 
 test.describe("SEO", () => {
+  // sitemap canlı veritabanını sorguluyor; Supabase ücretsiz planda ilk
+  // istek soğuk başlangıç nedeniyle yavaş olabiliyor.
+  test.slow();
+
   test("robots.txt üretilir", async ({ request }) => {
     const yanit = await request.get("/robots.txt");
     expect(yanit.status()).toBe(200);

@@ -4,6 +4,7 @@ import { ArrowLeft, ExternalLink } from "lucide-react";
 import { kategorileriGetir } from "@/actions/categories";
 import { urunGetir } from "@/actions/products";
 import { UrunFormu } from "@/components/panel/UrunFormu";
+import { UrunSil } from "@/components/panel/UrunSil";
 
 export const metadata = { title: "Ürünü düzenle" };
 
@@ -70,6 +71,10 @@ export default async function UrunDuzenleSayfasi({
           })),
         }}
       />
+
+      <div className="pb-28 md:pb-0">
+        <UrunSil id={urun.id} baslik={urun.baslik} />
+      </div>
     </div>
   );
 }

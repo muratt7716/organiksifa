@@ -184,6 +184,16 @@ Bu test **gerçek veritabanına yazar** ve şunların hepsini uçtan uca doğrul
 9. Sipariş panelde görünüyor, durumu değiştirilebiliyor
 10. Test ürünü sonunda yayından kaldırılıyor
 
+Test veritabanına **gerçek kayıt yazar**. Bittiğinde temizle:
+
+```bash
+npm run temizle -- --kuru   # önce ne silineceğini gör
+npm run temizle             # sonra sil
+```
+
+Yalnızca `Test Ürünü …` adlı ürünleri ve `Otomatik Test` adına verilmiş
+siparişleri siler; gerçek ürünlerine ve siparişlerine dokunmaz.
+
 ## 11. Panelden ilk ayarları gir
 
 **Panel → Ayarlar:**

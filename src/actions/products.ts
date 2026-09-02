@@ -211,7 +211,7 @@ export async function urunAnahtarDegistir(
   revalidatePath("/", "layout");
 }
 
-/** Silme değil arşivleme — veri kaybolmaz, sipariş geçmişi bozulmaz. */
+/** Yayından kaldırır — veri kaybolmaz, geri alınabilir. */
 export async function urunArsivle(id: string) {
   await yetkiGerekli();
   await db
@@ -220,4 +220,46 @@ export async function urunArsivle(id: string) {
     .where(eq(products.id, id));
   revalidatePath("/panel/urunler");
   revalidatePath("/", "layout");
+}
+
+/**
+ * Ürünü veritabanından KALICI olarak siler ve fotoğraflarını depodan kaldırır.
+ *
+ * Sipariş geçmişi bozulmaz: `order_items.urun_id` alanı ON DELETE SET NULL'dur
+ * ve satırlarda başlık, görsel ve fiyat kopyaları (snapshot) tutulur. Yani eski
+ * siparişler ürün silinse de eksiksiz görünmeye devam eder.
+ *
+ * Geri alınamaz. Panelde iki adımlı onay ister.
+ */
+export async function urunSil(
+  id: string,
+): Promise<{ hata?: string; basarili?: boolean }> {
+  try {
+    await yetkiGerekli();
+  } catch {
+    return { hata: "Oturumun kapanmış. Tekrar giriş yap." };
+  }
+
+  const [urun] = await db
+    .select({ baslik: products.baslik })
+    .from(products)
+    .where(eq(products.id, id));
+  if (!urun) return { hata: "Ürün zaten silinmiş." };
+
+  const gorseller = await db
+    .select({ storagePath: productImages.storagePath })
+    .from(productImages)
+    .where(eq(productImages.urunId, id));
+
+  // Önce depo dosyaları: veritabanı satırı silinince yolları kaybederiz.
+  if (gorseller.length) {
+    await depodanSil(gorseller.map((g) => g.storagePath)).catch(() => {});
+  }
+
+  // product_images ve reviews cascade ile birlikte silinir.
+  await db.delete(products).where(eq(products.id, id));
+
+  revalidatePath("/panel/urunler");
+  revalidatePath("/", "layout");
+  return { basarili: true };
 }

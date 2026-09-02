@@ -1,0 +1,5 @@
+﻿Logo dosyalarini buraya koy:
+  logo-yatay.png   (1200x300, seffaf)
+  logo-sembol.png  (1024x1024, seffaf)
+
+Promptlar: docs/AI-GORSEL-PROMPTLARI.md

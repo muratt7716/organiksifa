@@ -282,6 +282,11 @@ describe("tekRenkKenarlariKirp", () => {
     const px = gorselUret(20, 20, [2, 1, 3], [200, 220, 200], 4);
     expect(tekRenkKenarlariKirp(px, 8)).toEqual({ x: 4, y: 4, w: 12, h: 12 });
   });
+
+  it("kalın kenar bandını da kırpar", () => {
+    const px = gorselUret(20, 20, [255, 255, 255], [30, 80, 55], 8);
+    expect(tekRenkKenarlariKirp(px)).toEqual({ x: 8, y: 8, w: 4, h: 4 });
+  });
 });
 
 describe("zeminRengi", () => {

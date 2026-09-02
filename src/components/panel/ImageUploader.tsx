@@ -8,6 +8,7 @@ import { imzaliYuklemeUrlAl } from "@/actions/uploads";
 import { genelUrl, KOVA } from "@/lib/storage";
 import { ImageCropper } from "./ImageCropper";
 import type { Kutu } from "@/lib/image-analysis";
+import { cn } from "@/lib/utils";
 
 export type GorselKaydi = {
   url: string;
@@ -100,11 +101,22 @@ export function ImageUploader({
 
   return (
     <div className="space-y-3">
+      {value.length > 0 && (
+        <p className="text-sm bg-yesil-50 text-yesil-800 rounded-kontrol p-3">
+          <strong>Kapak fotoğrafı</strong>, müşterinin katalogda gördüğü
+          fotoğraftır. Uzun/dikey bir fotoğraf kapakta küçük kalır — kareye
+          yakın bir fotoğrafın varsa onu kapak yap.
+        </p>
+      )}
+
       <ul className="grid grid-cols-3 sm:grid-cols-4 gap-3">
         {value.map((g, i) => (
           <li key={g.storagePath} className="relative">
             <div
-              className="aspect-square rounded-gorsel overflow-hidden grid place-items-center border border-notr-200"
+              className={cn(
+                "aspect-square rounded-gorsel overflow-hidden grid place-items-center",
+                i === 0 ? "ring-2 ring-yesil-700" : "border border-notr-200",
+              )}
               style={{ backgroundColor: g.zeminRengi }}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -117,18 +129,18 @@ export function ImageUploader({
 
             {i === 0 ? (
               <span
-                className="absolute top-1 left-1 text-[11px] bg-yesil-700 text-notr-0
-                           px-1.5 py-0.5 rounded"
+                className="absolute top-1 left-1 inline-flex items-center gap-1
+                           text-[11px] bg-yesil-700 text-notr-0 px-1.5 py-0.5 rounded"
               >
-                Kapak
+                <Star size={10} aria-hidden="true" /> Kapak
               </span>
             ) : (
               <button
                 type="button"
-                aria-label={`${i + 1}. fotoğrafı kapak yap`}
                 onClick={() => onChange([g, ...value.filter((_, j) => j !== i)])}
-                className="absolute bottom-1 left-1 inline-flex items-center gap-1
-                           text-[11px] bg-notr-0/95 px-1.5 py-1 rounded cursor-pointer"
+                className="absolute inset-x-1 bottom-1 inline-flex items-center justify-center
+                           gap-1 min-h-[32px] text-[11px] bg-notr-0/95 rounded
+                           cursor-pointer hover:bg-notr-0 transition-colors"
               >
                 <Star size={11} aria-hidden="true" /> Kapak yap
               </button>
@@ -181,8 +193,8 @@ export function ImageUploader({
         </p>
       )}
       <p className="text-xs text-notr-400">
-        İlk fotoğraf ürün kartında görünür. Fotoğraflar otomatik küçültülür —
-        büyük dosya yüklemekten çekinme.
+        Fotoğraflar yüklenirken otomatik olarak WebP biçimine çevrilip
+        küçültülür (yaklaşık 5 MB → 200 KB). Büyük dosya yüklemekten çekinme.
       </p>
     </div>
   );

@@ -53,6 +53,8 @@ npm run demo         # 3. terminal — site
 | `npm test` | Birim testleri (46 test) |
 | `npm run test:e2e` | Mağaza uçtan uca testleri (70 test) |
 | `npm run test:panel` | **Canlı panel testi** — gerçek ürün ekler, sipariş verir |
+| `npm run temizle` | Canlı testin bıraktığı test ürünü ve siparişleri siler |
+| `npm run temizle -- --kuru` | Ne silineceğini gösterir, silmez |
 | `npm run dogrula` | Supabase kurulumunu gerçekten dener ve eksikleri yazar |
 | `npm run sql:dogrula` | `supabase/kurulum.sql`'i gerçek PostgreSQL'de sınar |
 | `npm run db:studio` | Veritabanını tarayıcıda tablo hâlinde görüntüle |

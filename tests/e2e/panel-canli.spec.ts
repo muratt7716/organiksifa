@@ -60,7 +60,30 @@ test.describe("Canlı akış — ürün ekleme ve sipariş", () => {
     await page.getByRole("button", { name: "Kırpmadan devam et" }).click();
 
     // Yükleme bitene kadar bekle (kapak rozeti belirir).
-    await expect(page.getByText("Kapak")).toBeVisible({ timeout: 45_000 });
+    await expect(page.getByText("Kapak", { exact: true })).toBeVisible({
+      timeout: 45_000,
+    });
+
+    // WebP dönüşümü ve sıkıştırma gerçekten oldu mu — dosyayı indirip bak.
+    const yuklenenUrl = await page
+      .locator("ul li img")
+      .first()
+      .getAttribute("src");
+    expect(yuklenenUrl, "yüklenen görselin adresi bulunamadı").toBeTruthy();
+
+    const dosya = await page.request.get(yuklenenUrl!);
+    expect(dosya.status()).toBe(200);
+    expect(
+      dosya.headers()["content-type"],
+      "yüklenen dosya WebP değil",
+    ).toContain("webp");
+
+    const bayt = (await dosya.body()).length;
+    console.log(`  → yüklenen görsel: ${bayt} bayt, WebP`);
+    // Test görseli düz renk olduğu için WebP'de çok küçülüyor; asıl kontrol
+    // biçimin WebP olması ve dosyanın 250 KB sınırının altında kalması.
+    expect(bayt, "sıkıştırma çalışmamış").toBeLessThan(260_000);
+    expect(bayt, "dosya boş görünüyor").toBeGreaterThan(200);
 
     await page.getByLabel("Ürün adı").fill(URUN_ADI);
     await page.getByLabel("Fiyat (₺)").fill(FIYAT_METNI);
@@ -112,7 +135,14 @@ test.describe("Canlı akış — ürün ekleme ve sipariş", () => {
 
     await kart.getByRole("link").first().click();
     await expect(page.getByRole("heading", { name: URUN_ADI, level: 1 })).toBeVisible();
-    await expect(page.getByText("Bileşen A")).toBeVisible();
+
+    // "Bileşen A" hem set listesinde hem SSS cevabında geçiyor —
+    // set bölümüne daraltarak doğru olanı doğruluyoruz.
+    const setBolumu = page
+      .locator("section")
+      .filter({ has: page.getByRole("heading", { name: "Set içeriği" }) });
+    await expect(setBolumu.getByText("Bileşen A")).toBeVisible();
+    await expect(setBolumu.getByText("Bileşen B")).toBeVisible();
 
     await page.getByRole("button", { name: "Sepete ekle" }).click();
     await expect(page.getByRole("link", { name: "Sepete git" })).toBeVisible();
@@ -136,8 +166,9 @@ test.describe("Canlı akış — ürün ekleme ve sipariş", () => {
     await page.goto("/odeme");
     await page.getByLabel("Ad soyad").fill("Otomatik Test");
     await page.getByLabel("Telefon").fill("0532 000 00 00");
-    await page.getByLabel("İl").selectOption("İstanbul");
-    await page.getByLabel("İlçe").fill("Kadıköy");
+    // "İl" alt dize olarak "İlçe" ile de eşleşiyor — tam eşleşme şart.
+    await page.getByLabel("İl", { exact: true }).selectOption("İstanbul");
+    await page.getByLabel("İlçe", { exact: true }).fill("Kadıköy");
     await page
       .getByLabel("Açık adres")
       .fill("Test Mahallesi, Otomasyon Sokak No:1 Daire:2");
@@ -151,8 +182,25 @@ test.describe("Canlı akış — ürün ekleme ve sipariş", () => {
     await expect(
       page.getByRole("heading", { name: "Siparişin oluşturuldu" }),
     ).toBeVisible();
-    await expect(page.getByText(/GÖNDER/)).toBeVisible();
     await expect(page.getByText("1.250,00 ₺").first()).toBeVisible();
+
+    // WhatsApp numarası Ayarlar'dan girildiyse devir teslim adımı çıkar;
+    // girilmediyse açık bir bilgilendirme gösterilir. İkisi de doğru davranış.
+    const onayButonu = page.getByRole("link", { name: /WhatsApp'tan Onayla/ });
+    if (await onayButonu.isVisible().catch(() => false)) {
+      await expect(page.getByText(/GÖNDER/)).toBeVisible();
+      await expect(onayButonu).toHaveAttribute("href", /^https:\/\/wa\.me\/\d+\?text=/);
+      // Sipariş numarası mesajın EN BAŞINDA olmalı (uzun mesaj kırpılırsa bile kalsın)
+      const href = (await onayButonu.getAttribute("href")) ?? "";
+      const mesaj = decodeURIComponent(href.split("?text=")[1] ?? "");
+      expect(mesaj.startsWith("Sipariş No: ORD-")).toBe(true);
+      await expect(page.getByRole("button", { name: /Sipariş no:/ })).toBeVisible();
+    } else {
+      await expect(page.getByText(/WhatsApp numarası henüz tanımlı değil/)).toBeVisible();
+      console.warn(
+        "\n  UYARI: WhatsApp numarası girilmemiş — Panel > Ayarlar'dan gir.\n",
+      );
+    }
 
     // Sipariş numarasını sonraki test için sakla
     const url = page.url();

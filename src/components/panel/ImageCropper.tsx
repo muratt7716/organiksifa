@@ -32,9 +32,9 @@ function ortalanmisKutu(g: number, y: number, oran: number): Kutu {
 /**
  * Kırpma ekranı. Atlanabilir.
  *
- * Neden gerekli: yüklenen görsellerin bir kısmı telefon ekran görüntüsü
- * (saat, pil, WhatsApp çubuğu) veya çok uzun infografik oluyor. Kare kırpma
- * seçeneği, ürün kartında en düzgün duran görseli tek dokunuşla veriyor.
+ * Koordinatlar GÖRSELİN kendi ölçüsünden okunur, kabın değil. Görsel kabın
+ * içinde ortalanıp küçüldüğü için kabın ölçüsü kullanılırsa seçilen alan
+ * kayar ve yanlış bölge kırpılır.
  */
 export function ImageCropper({
   src,
@@ -52,40 +52,49 @@ export function ImageCropper({
   const [oran, setOran] = useState<number | null>(null);
   const [kutu, setKutu] = useState<Kutu>({ x: 0, y: 0, w: 0, h: 0 });
   const [surukle, setSurukle] = useState<{ x: number; y: number } | null>(null);
-  const ref = useRef<HTMLDivElement>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
 
   const secili = kutu.w > 16 && kutu.h > 16;
 
+  /** Ekran koordinatını görselin piksel koordinatına çevirir. */
   function konum(e: React.PointerEvent) {
-    const r = ref.current!.getBoundingClientRect();
+    const el = imgRef.current;
+    if (!el) return { x: 0, y: 0 };
+    const r = el.getBoundingClientRect();
     return {
-      x: Math.max(0, Math.min(genislik, Math.round(((e.clientX - r.left) / r.width) * genislik))),
-      y: Math.max(0, Math.min(yukseklik, Math.round(((e.clientY - r.top) / r.height) * yukseklik))),
+      x: Math.max(
+        0,
+        Math.min(genislik, Math.round(((e.clientX - r.left) / r.width) * genislik)),
+      ),
+      y: Math.max(
+        0,
+        Math.min(yukseklik, Math.round(((e.clientY - r.top) / r.height) * yukseklik)),
+      ),
     };
   }
 
   function oranSec(yeni: number | null) {
     setOran(yeni);
-    if (yeni === null) {
-      setKutu({ x: 0, y: 0, w: 0, h: 0 });
-    } else {
-      setKutu(ortalanmisKutu(genislik, yukseklik, yeni));
-    }
+    setKutu(
+      yeni === null
+        ? { x: 0, y: 0, w: 0, h: 0 }
+        : ortalanmisKutu(genislik, yukseklik, yeni),
+    );
   }
 
   function surukleGuncelle(p: { x: number; y: number }) {
     if (!surukle) return;
+
+    const x = Math.min(surukle.x, p.x);
+    const y = Math.min(surukle.y, p.y);
     let w = Math.abs(p.x - surukle.x);
     let h = Math.abs(p.y - surukle.y);
 
     if (oran !== null) {
-      // Oran kilidi: kısa kenarı uzun kenara göre yeniden hesapla
+      // Oran kilidi: uzun kenara göre kısa kenarı yeniden hesapla
       if (w / oran > h) h = w / oran;
       else w = h * oran;
     }
-
-    const x = Math.max(0, Math.min(surukle.x, p.x));
-    const y = Math.max(0, Math.min(surukle.y, p.y));
 
     setKutu({
       x,
@@ -95,12 +104,14 @@ export function ImageCropper({
     });
   }
 
+  const yuzde = (deger: number, tam: number) => `${(deger / tam) * 100}%`;
+
   return (
     <div className="space-y-3">
       <p className="text-sm text-notr-600">
-        Gereksiz kısımları (telefon çubuğu, boşluk) çıkarmak için fotoğrafın
-        üzerinde sürükle. Ürün kartında en düzgün duran{" "}
-        <strong className="text-notr-900">Kare</strong> seçenektir.
+        Fotoğrafın üzerinde sürükleyerek kullanmak istediğin alanı seç. Ürün
+        kartında en düzgün duran <strong className="text-notr-900">Kare</strong>{" "}
+        seçenektir. Gerekmiyorsa atlayabilirsin.
       </p>
 
       <div className="flex flex-wrap gap-2">
@@ -122,56 +133,61 @@ export function ImageCropper({
             {ad}
           </button>
         ))}
-        <button
-          type="button"
-          onClick={() => oranSec(oran ?? 1)}
-          className="inline-flex items-center gap-1.5 min-h-[44px] px-3.5 rounded-kontrol
-                     text-sm border border-notr-200 bg-notr-0 cursor-pointer
-                     hover:border-yesil-400 transition-colors"
-        >
-          <Scan size={16} aria-hidden="true" />
-          Ortala
-        </button>
+        {oran !== null && (
+          <button
+            type="button"
+            onClick={() => oranSec(oran)}
+            className="inline-flex items-center gap-1.5 min-h-[44px] px-3.5 rounded-kontrol
+                       text-sm border border-notr-200 bg-notr-0 cursor-pointer
+                       hover:border-yesil-400 transition-colors"
+          >
+            <Scan size={16} aria-hidden="true" />
+            Ortala
+          </button>
+        )}
       </div>
 
-      <div
-        ref={ref}
-        className="relative select-none touch-none rounded-gorsel overflow-hidden
-                   bg-notr-100 cursor-crosshair max-h-[55vh] grid place-items-center"
-        onPointerDown={(e) => {
-          e.currentTarget.setPointerCapture(e.pointerId);
-          const p = konum(e);
-          setSurukle(p);
-          setKutu({ x: p.x, y: p.y, w: 0, h: 0 });
-        }}
-        onPointerMove={(e) => surukleGuncelle(konum(e))}
-        onPointerUp={() => setSurukle(null)}
-      >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={src}
-          alt=""
-          className="w-full h-auto max-h-[55vh] object-contain block"
-          draggable={false}
-        />
-
-        {secili && (
-          <div
-            className="absolute border-2 border-yesil-700 pointer-events-none
-                       shadow-[0_0_0_9999px_rgba(23,33,27,0.55)]"
-            style={{
-              left: `${(kutu.x / genislik) * 100}%`,
-              top: `${(kutu.y / yukseklik) * 100}%`,
-              width: `${(kutu.w / genislik) * 100}%`,
-              height: `${(kutu.h / yukseklik) * 100}%`,
-            }}
+      {/* Kap yalnızca hizalama yapar; ölçüm her zaman <img> üzerinden. */}
+      <div className="grid place-items-center bg-notr-100 rounded-gorsel overflow-hidden">
+        <div
+          className="relative select-none touch-none cursor-crosshair"
+          onPointerDown={(e) => {
+            e.currentTarget.setPointerCapture(e.pointerId);
+            const p = konum(e);
+            setSurukle(p);
+            setKutu({ x: p.x, y: p.y, w: 0, h: 0 });
+          }}
+          onPointerMove={(e) => surukleGuncelle(konum(e))}
+          onPointerUp={() => setSurukle(null)}
+          onPointerCancel={() => setSurukle(null)}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            ref={imgRef}
+            src={src}
+            alt=""
+            className="block max-h-[55vh] w-auto max-w-full"
+            draggable={false}
           />
-        )}
+
+          {secili && (
+            <div
+              className="absolute border-2 border-yesil-700 pointer-events-none
+                         shadow-[0_0_0_9999px_rgba(23,33,27,0.55)]"
+              style={{
+                left: yuzde(kutu.x, genislik),
+                top: yuzde(kutu.y, yukseklik),
+                width: yuzde(kutu.w, genislik),
+                height: yuzde(kutu.h, yukseklik),
+              }}
+            />
+          )}
+        </div>
       </div>
 
       {secili && (
         <p className="text-xs text-notr-400 rakam" aria-live="polite">
-          Seçilen alan: {kutu.w} × {kutu.h} piksel
+          Seçilen alan: {Math.round(kutu.w)} × {Math.round(kutu.h)} piksel
         </p>
       )}
 
