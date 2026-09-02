@@ -1,0 +1,34 @@
+{
+  "d-vitamini": {
+    "url": "/demo/d-vitamini-altin-yag.webp",
+    "storagePath": "demo/d-vitamini-altin-yag.webp",
+    "genislik": 704,
+    "yukseklik": 910,
+    "zeminRengi": "#49396A",
+    "boyutKb": 81
+  },
+  "uyuz-seti": {
+    "url": "/demo/uyuz-seti.webp",
+    "storagePath": "demo/uyuz-seti.webp",
+    "genislik": 1042,
+    "yukseklik": 1600,
+    "zeminRengi": "#B88253",
+    "boyutKb": 196
+  },
+  "detox-seti": {
+    "url": "/demo/zayiflama-detox-seti.webp",
+    "storagePath": "demo/zayiflama-detox-seti.webp",
+    "genislik": 1002,
+    "yukseklik": 1600,
+    "zeminRengi": "#4D4018",
+    "boyutKb": 180
+  },
+  "merhem": {
+    "url": "/demo/hucre-yenileyici-merhem.webp",
+    "storagePath": "demo/hucre-yenileyici-merhem.webp",
+    "genislik": 720,
+    "yukseklik": 1547,
+    "zeminRengi": "#34434A",
+    "boyutKb": 125
+  }
+}

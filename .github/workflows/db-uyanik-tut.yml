@@ -1,0 +1,25 @@
+name: Veritabanini uyanik tut
+
+# Supabase ucretsiz planda 7 gun trafiksiz kalan proje DURAKLATILIR.
+# Duraklarsa sadece magaza degil PANEL de acilmaz — siparis goruntulenemez.
+# Bu is akisi 3 gunde bir kucuk bir istek atarak projeyi ayakta tutar.
+
+on:
+  schedule:
+    - cron: "0 6 */3 * *" # 3 gunde bir 06:00 UTC
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Supabase REST ucuna istek at
+        run: |
+          kod=$(curl -sS -o /dev/null -w "%{http_code}" \
+            "${{ secrets.SUPABASE_URL }}/rest/v1/settings?select=id&limit=1" \
+            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}")
+          echo "HTTP $kod"
+          if [ "$kod" != "200" ]; then
+            echo "Veritabanina ulasilamadi (HTTP $kod)"
+            exit 1
+          fi

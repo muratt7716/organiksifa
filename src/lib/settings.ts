@@ -1,0 +1,50 @@
+import { eq } from "drizzle-orm";
+import { db } from "@/db";
+import { settings } from "@/db/schema";
+import { sayi } from "./price";
+
+export type Ayarlar = typeof settings.$inferSelect;
+
+/** Veritabanı henüz kurulmamışsa bile site ayakta kalsın diye kullanılan varsayılan. */
+export const VARSAYILAN_AYAR: Ayarlar = {
+  id: 1,
+  siteAdi: "Organik Şifa",
+  siteSlogan: "Doğadan gelen şifa, kapına kadar",
+  whatsappNumarasi: null,
+  whatsappSablon: null,
+  kargoBedavaAcik: true,
+  kargoBedavaLimit: "750.00",
+  kargoUcreti: "99.00",
+  varsayilanKdv: "0",
+  duyuruMetni: null,
+  duyuruAcik: false,
+  instagramUrl: null,
+  iletisimTelefon: null,
+  iletisimEmail: null,
+  ticaretUnvani: null,
+  adres: null,
+  mersisNo: null,
+  vergiDairesi: null,
+  vergiNo: null,
+  etbisDogrulamaUrl: null,
+  bildirimKanallari: { telegram: true, email: false },
+  guncellendiAt: new Date(),
+};
+
+export async function ayarlariGetir(): Promise<Ayarlar> {
+  try {
+    const [satir] = await db.select().from(settings).where(eq(settings.id, 1));
+    return satir ?? VARSAYILAN_AYAR;
+  } catch {
+    return VARSAYILAN_AYAR;
+  }
+}
+
+/** Kargo hesabı için sayıya çevrilmiş ayar. */
+export function kargoAyari(a: Ayarlar) {
+  return {
+    kargoBedavaAcik: a.kargoBedavaAcik,
+    kargoBedavaLimit: a.kargoBedavaLimit ? sayi(a.kargoBedavaLimit) : null,
+    kargoUcreti: a.kargoUcreti ? sayi(a.kargoUcreti) : null,
+  };
+}

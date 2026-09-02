@@ -1,0 +1,37 @@
+name: Gunluk veritabani yedegi
+
+# Supabase ucretsiz planda YEDEKLEME YOKTUR.
+# Tek hatali komut tum siparis gecmisini siler ve geri donusu olmaz.
+# Bu is akisi her gece tam yedek alip 30 gun saklar.
+
+on:
+  schedule:
+    - cron: "0 2 * * *" # her gun 02:00 UTC (TR 05:00)
+  workflow_dispatch:
+
+jobs:
+  yedek:
+    runs-on: ubuntu-latest
+    steps:
+      - name: PostgreSQL 17 istemcisini kur
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y postgresql-common
+          echo | sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh
+          sudo apt-get install -y postgresql-client-17
+
+      - name: Yedek al
+        run: |
+          tarih=$(date +%Y-%m-%d)
+          pg_dump "${{ secrets.DIRECT_URL }}" \
+            --no-owner --no-privileges --clean --if-exists \
+            -f "organiksifa-$tarih.sql"
+          gzip "organiksifa-$tarih.sql"
+          ls -lh organiksifa-*.sql.gz
+
+      - name: Yedegi sakla
+        uses: actions/upload-artifact@v4
+        with:
+          name: db-yedek-${{ github.run_id }}
+          path: "*.sql.gz"
+          retention-days: 30
