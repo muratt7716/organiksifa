@@ -11,7 +11,10 @@ export default defineConfig({
   testDir: "./tests/e2e",
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
+  // Supabase ücretsiz planın bağlantı havuzu sınırlı; çok sayıda eşzamanlı
+  // istek testleri kararsız hale getiriyor (sitede değil, test ortamında).
+  workers: 3,
+  retries: 1,
   reporter: [["list"]],
 
   use: {

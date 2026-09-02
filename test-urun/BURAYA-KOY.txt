@@ -1,6 +1,0 @@
-﻿AI ile uretilen test urun gorsellerini buraya koy:
-  01-kapak.png     (1500x1500 KARE)
-  02-icerik.png    (1200x1500)
-  03-kullanim.png  (1200x1500)
-
-Promptlar: docs/AI-GORSEL-PROMPTLARI.md

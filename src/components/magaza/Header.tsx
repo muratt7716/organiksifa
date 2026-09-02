@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Menu, X, Leaf } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { SepetRozeti } from "./SepetRozeti";
 import { cn } from "@/lib/utils";
 
@@ -40,11 +41,17 @@ export function Header({
         <div className="mx-auto max-w-6xl px-4 h-16 flex items-center gap-3">
           <Link
             href="/"
-            className="flex items-center gap-2 shrink-0 min-h-[44px]"
+            className="flex items-center shrink-0 min-h-[44px]"
             aria-label={`${siteAdi} ana sayfa`}
           >
-            <Leaf size={22} className="text-yesil-700" aria-hidden="true" />
-            <span className="font-baslik text-xl text-yesil-700">{siteAdi}</span>
+            <Image
+              src="/marka/logo-yatay.png"
+              alt={siteAdi}
+              width={1200}
+              height={300}
+              priority
+              className="h-8 w-auto sm:h-9"
+            />
           </Link>
 
           <nav

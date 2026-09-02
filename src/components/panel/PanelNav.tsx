@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   Home,
@@ -43,8 +44,14 @@ export function PanelNav({
       className="fixed bottom-0 inset-x-0 z-40 bg-notr-0 border-t border-notr-200
                  md:static md:border-t-0 md:border-r md:h-dvh md:w-56 md:shrink-0 md:sticky md:top-0"
     >
-      <div className="hidden md:block px-4 py-4 border-b border-notr-200">
-        <span className="font-baslik text-lg text-yesil-700">Organik Şifa</span>
+      <div className="hidden md:flex items-center px-4 py-4 border-b border-notr-200">
+        <Image
+          src="/marka/logo-yatay.png"
+          alt="Organik Şifa"
+          width={1200}
+          height={300}
+          className="h-7 w-auto"
+        />
       </div>
       <ul className="flex md:flex-col md:p-2 md:gap-0.5">
         {BAGLANTILAR.map(({ href, etiket, kisa, Ikon }) => {

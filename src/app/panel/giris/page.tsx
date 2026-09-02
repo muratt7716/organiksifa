@@ -1,8 +1,8 @@
 "use client";
 
 import { useActionState } from "react";
+import Image from "next/image";
 import { girisYap, type GirisDurumu } from "@/actions/auth";
-import { Leaf } from "lucide-react";
 
 export default function GirisSayfasi() {
   const [durum, action, bekliyor] = useActionState<GirisDurumu, FormData>(
@@ -16,9 +16,16 @@ export default function GirisSayfasi() {
         action={action}
         className="w-full max-w-sm bg-notr-0 rounded-panel p-6 space-y-5 border border-notr-200"
       >
-        <div className="space-y-1">
-          <Leaf className="text-yesil-700" size={28} aria-hidden="true" />
-          <h1 className="text-2xl text-yesil-700">Organik Şifa</h1>
+        <div className="space-y-2">
+          <Image
+            src="/marka/logo-yatay.png"
+            alt="Organik Şifa"
+            width={1200}
+            height={300}
+            priority
+            className="h-10 w-auto"
+          />
+          <h1 className="sr-only">Organik Şifa yönetim paneli</h1>
           <p className="text-notr-600 text-sm">Yönetim paneline giriş yap</p>
         </div>
 

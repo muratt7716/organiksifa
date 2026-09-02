@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Leaf, Phone, Mail, MessageCircle, MapPin } from "lucide-react";
+import Image from "next/image";
+import { Phone, Mail, MessageCircle, MapPin } from "lucide-react";
 import type { Ayarlar } from "@/lib/settings";
 import { telefonGoster } from "@/lib/phone";
 import { InstagramIkon } from "./Ikonlar";
@@ -68,14 +69,14 @@ export function Footer({
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-12">
           {/* Marka */}
           <div className="lg:col-span-4 space-y-4">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-2 min-h-[44px] -my-1"
-            >
-              <Leaf size={22} className="text-yesil-700" aria-hidden="true" />
-              <span className="font-baslik text-xl text-yesil-700">
-                {ayar.siteAdi}
-              </span>
+            <Link href="/" className="inline-flex items-center min-h-[44px] -my-1">
+              <Image
+                src="/marka/logo-yatay.png"
+                alt={ayar.siteAdi}
+                width={1200}
+                height={300}
+                className="h-9 w-auto"
+              />
             </Link>
 
             <p className="text-sm text-notr-600 max-w-[34ch] leading-relaxed">
