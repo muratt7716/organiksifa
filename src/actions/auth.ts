@@ -7,6 +7,7 @@ import { supabaseSunucu } from "@/lib/supabase/server";
 import { db } from "@/db";
 import { adminProfiles } from "@/db/schema";
 import { DEMO_MODU, DEMO_ADMIN } from "@/lib/demo";
+import { sureli } from "@/lib/db-sure";
 
 const GirisSemasi = z.object({
   email: z.string().email("Geçerli bir e-posta adresi yaz"),
@@ -68,20 +69,21 @@ export async function mevcutAdmin(): Promise<Admin | null> {
     } = await supabase.auth.getUser();
     if (!user) return null;
 
-    const [profil] = await db
-      .select()
-      .from(adminProfiles)
-      .where(eq(adminProfiles.id, user.id));
+    const [profil] = await sureli(
+      db.select().from(adminProfiles).where(eq(adminProfiles.id, user.id)),
+    );
     if (profil) return { id: profil.id, ad: profil.ad, rol: profil.rol };
 
-    const [yeni] = await db
-      .insert(adminProfiles)
-      .values({
-        id: user.id,
-        ad: user.email?.split("@")[0] ?? "Yönetici",
-        rol: "owner",
-      })
-      .returning();
+    const [yeni] = await sureli(
+      db
+        .insert(adminProfiles)
+        .values({
+          id: user.id,
+          ad: user.email?.split("@")[0] ?? "Yönetici",
+          rol: "owner",
+        })
+        .returning(),
+    );
     return { id: yeni.id, ad: yeni.ad, rol: yeni.rol };
   } catch (e) {
     console.error("[auth] yönetici doğrulanamadı", e);

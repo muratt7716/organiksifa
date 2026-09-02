@@ -6,6 +6,7 @@ import { eq, and, desc, avg, count } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
 import { reviews, products, orders } from "@/db/schema";
+import { sureliVeyaYedek } from "@/lib/db-sure";
 import { yetkiGerekli } from "./auth";
 
 const YorumSemasi = z.object({
@@ -68,21 +69,21 @@ export async function yorumEkle(
 }
 
 export async function urunYorumlari(urunId: string) {
-  try {
-    return await db
-      .select()
-      .from(reviews)
-      .where(and(eq(reviews.urunId, urunId), eq(reviews.durum, "onayli")))
-      .orderBy(desc(reviews.dogrulanmisAlici), desc(reviews.onayAt));
-  } catch {
-    return [];
-  }
+  return sureliVeyaYedek(
+    () =>
+      db
+        .select()
+        .from(reviews)
+        .where(and(eq(reviews.urunId, urunId), eq(reviews.durum, "onayli")))
+        .orderBy(desc(reviews.dogrulanmisAlici), desc(reviews.onayAt)),
+    [] as (typeof reviews.$inferSelect)[],
+  );
 }
 
 /* ------------------------------ Panel ------------------------------ */
 
 export async function yorumlariGetir(durum: string = "bekliyor") {
-  try {
+  return sureliVeyaYedek(async () => {
     return await db
       .select({
         id: reviews.id,
@@ -101,10 +102,24 @@ export async function yorumlariGetir(durum: string = "bekliyor") {
       .where(durum === "hepsi" ? undefined : eq(reviews.durum, durum))
       .orderBy(desc(reviews.createdAt))
       .limit(200);
-  } catch {
-    return [];
-  }
+  }, [] as Awaited<ReturnType<typeof yorumSorgusu>>);
 }
+
+/** yorumlariGetir'in dönüş tipini türetmek için — çalıştırılmaz. */
+declare function yorumSorgusu(): Promise<
+  {
+    id: string;
+    ad: string;
+    puan: number;
+    yorum: string;
+    durum: string;
+    dogrulanmisAlici: boolean;
+    saticiYaniti: string | null;
+    createdAt: Date;
+    urunId: string;
+    urunBaslik: string | null;
+  }[]
+>;
 
 /** Ürünün ortalama puanını ve yorum sayısını yeniden hesaplar. */
 async function puanTazele(urunId: string) {

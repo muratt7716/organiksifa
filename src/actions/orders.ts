@@ -23,6 +23,7 @@ import { kargoHesapla } from "@/lib/shipping";
 import { ayarlariGetir, kargoAyari } from "@/lib/settings";
 import { ilGecerliMi } from "@/lib/tr-iller";
 import { siparisBildir } from "@/lib/notify";
+import { sureliVeyaYedek } from "@/lib/db-sure";
 import { yetkiGerekli } from "./auth";
 
 /* =========================================================================
@@ -277,16 +278,18 @@ export async function siparisOlustur(
    ========================================================================= */
 
 export async function siparisGetirToken(siparisNo: string, token: string) {
-  const [siparis] = await db
-    .select()
-    .from(orders)
-    .where(and(eq(orders.siparisNo, siparisNo), eq(orders.erisimToken, token)));
-  if (!siparis) return null;
-  const kalemler = await db
-    .select()
-    .from(orderItems)
-    .where(eq(orderItems.siparisId, siparis.id));
-  return { siparis, kalemler };
+  return sureliVeyaYedek(async () => {
+    const [siparis] = await db
+      .select()
+      .from(orders)
+      .where(and(eq(orders.siparisNo, siparisNo), eq(orders.erisimToken, token)));
+    if (!siparis) return null;
+    const kalemler = await db
+      .select()
+      .from(orderItems)
+      .where(eq(orderItems.siparisId, siparis.id));
+    return { siparis, kalemler };
+  }, null);
 }
 
 export async function whatsappTiklandi(siparisNo: string) {
@@ -304,7 +307,7 @@ export async function whatsappTiklandi(siparisNo: string) {
    ========================================================================= */
 
 export async function siparisleriGetir(arama?: string, durum?: string) {
-  try {
+  return sureliVeyaYedek(async () => {
     const kosullar = [];
     if (arama?.trim()) {
       const q = `%${arama.trim()}%`;
@@ -325,12 +328,14 @@ export async function siparisleriGetir(arama?: string, durum?: string) {
       .where(kosullar.length ? and(...kosullar) : undefined)
       .orderBy(desc(orders.createdAt))
       .limit(100);
-  } catch {
-    return [];
-  }
+  }, [] as (typeof orders.$inferSelect)[]);
 }
 
 export async function siparisDetay(id: string) {
+  return sureliVeyaYedek(() => siparisDetayOku(id), null, 8000);
+}
+
+async function siparisDetayOku(id: string) {
   const [siparis] = await db.select().from(orders).where(eq(orders.id, id));
   if (!siparis) return null;
   const [kalemler, olaylar, gecmis] = await Promise.all([
@@ -443,7 +448,7 @@ export async function kargoGuncelle(
 }
 
 export async function panelOzeti() {
-  try {
+  return sureliVeyaYedek(async () => {
     const bugun = new Date();
     bugun.setHours(0, 0, 0, 0);
 
@@ -470,7 +475,5 @@ export async function panelOzeti() {
       bekleyen: bekleyen?.n ?? 0,
       odemeBekleyen: odemeBekleyen?.n ?? 0,
     };
-  } catch {
-    return { bugunSiparis: 0, bugunCiro: 0, bekleyen: 0, odemeBekleyen: 0 };
-  }
+  }, { bugunSiparis: 0, bugunCiro: 0, bekleyen: 0, odemeBekleyen: 0 });
 }

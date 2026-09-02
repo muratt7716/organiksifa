@@ -1,0 +1,26 @@
+[
+  {
+    "dosya": "01.webp",
+    "genislik": 1500,
+    "yukseklik": 1500,
+    "zeminRengi": "#F4F4F4",
+    "tur": "kapak",
+    "sira": 0
+  },
+  {
+    "dosya": "02.webp",
+    "genislik": 1199,
+    "yukseklik": 1399,
+    "zeminRengi": "#EFECE7",
+    "tur": "galeri",
+    "sira": 1
+  },
+  {
+    "dosya": "03.webp",
+    "genislik": 1200,
+    "yukseklik": 1500,
+    "zeminRengi": "#C0AE9C",
+    "tur": "galeri",
+    "sira": 2
+  }
+]

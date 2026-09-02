@@ -6,6 +6,7 @@ import { z } from "zod";
 import { db } from "@/db";
 import { categories } from "@/db/schema";
 import { benzersizSlug } from "@/lib/slug";
+import { sureliVeyaYedek } from "@/lib/db-sure";
 import { yetkiGerekli } from "./auth";
 
 export type Kategori = typeof categories.$inferSelect;
@@ -17,14 +18,11 @@ const AdSemasi = z
   .max(60, "Kategori adı çok uzun");
 
 export async function kategorileriGetir(): Promise<Kategori[]> {
-  try {
-    return await db
-      .select()
-      .from(categories)
-      .orderBy(asc(categories.sira), asc(categories.ad));
-  } catch {
-    return [];
-  }
+  return sureliVeyaYedek(
+    () =>
+      db.select().from(categories).orderBy(asc(categories.sira), asc(categories.ad)),
+    [],
+  );
 }
 
 export async function kategoriEkle(_prev: { hata?: string }, formData: FormData) {

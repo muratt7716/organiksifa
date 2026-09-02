@@ -9,6 +9,7 @@ import { benzersizSlug } from "@/lib/slug";
 import { fiyatAyristir } from "@/lib/price";
 import { yetkiGerekli } from "./auth";
 import { depodanSil } from "./uploads";
+import { sureliVeyaYedek } from "@/lib/db-sure";
 
 const GorselSemasi = z.object({
   url: z.string().min(1),
@@ -150,14 +151,16 @@ export async function urunKaydet(
 }
 
 export async function urunGetir(id: string) {
-  const [urun] = await db.select().from(products).where(eq(products.id, id));
-  if (!urun) return null;
-  const gorseller = await db
-    .select()
-    .from(productImages)
-    .where(eq(productImages.urunId, id))
-    .orderBy(asc(productImages.sira));
-  return { urun, gorseller };
+  return sureliVeyaYedek(async () => {
+    const [urun] = await db.select().from(products).where(eq(products.id, id));
+    if (!urun) return null;
+    const gorseller = await db
+      .select()
+      .from(productImages)
+      .where(eq(productImages.urunId, id))
+      .orderBy(asc(productImages.sira));
+    return { urun, gorseller };
+  }, null);
 }
 
 export type UrunSatirVerisi = {
@@ -172,7 +175,7 @@ export type UrunSatirVerisi = {
 };
 
 export async function urunleriGetir(): Promise<UrunSatirVerisi[]> {
-  try {
+  return sureliVeyaYedek(async () => {
     const satirlar = await db
       .select({
         id: products.id,
@@ -192,9 +195,7 @@ export async function urunleriGetir(): Promise<UrunSatirVerisi[]> {
       )
       .orderBy(asc(products.sira), asc(products.baslik));
     return satirlar;
-  } catch {
-    return [];
-  }
+  }, []);
 }
 
 export async function urunAnahtarDegistir(

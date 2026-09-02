@@ -3,6 +3,7 @@ import { sql } from "drizzle-orm";
 import { mevcutAdmin, cikisYap } from "@/actions/auth";
 import { PanelNav } from "@/components/panel/PanelNav";
 import { db } from "@/db";
+import { sureliVeyaYedek } from "@/lib/db-sure";
 
 export const dynamic = "force-dynamic";
 
@@ -12,18 +13,18 @@ export const dynamic = "force-dynamic";
  * ve bu her panel sayfası açılışında tekrarlanıyordu.
  */
 async function bekleyenSayilar() {
-  try {
-    const sonuc = (await db.execute(sql`
-      SELECT
-        (SELECT count(*)::int FROM orders  WHERE durum = 'yeni')      AS siparis,
-        (SELECT count(*)::int FROM reviews WHERE durum = 'bekliyor')  AS yorum
-    `)) as unknown as { siparis: number; yorum: number }[];
-    const satir = Array.isArray(sonuc) ? sonuc[0] : undefined;
-    return { siparis: satir?.siparis ?? 0, yorum: satir?.yorum ?? 0 };
-  } catch {
-    // Veritabanı henüz kurulmadıysa panel yine de açılsın.
-    return { siparis: 0, yorum: 0 };
-  }
+  return sureliVeyaYedek(
+    async () => {
+      const sonuc = (await db.execute(sql`
+        SELECT
+          (SELECT count(*)::int FROM orders  WHERE durum = 'yeni')      AS siparis,
+          (SELECT count(*)::int FROM reviews WHERE durum = 'bekliyor')  AS yorum
+      `)) as unknown as { siparis: number; yorum: number }[];
+      const satir = Array.isArray(sonuc) ? sonuc[0] : undefined;
+      return { siparis: satir?.siparis ?? 0, yorum: satir?.yorum ?? 0 };
+    },
+    { siparis: 0, yorum: 0 },
+  );
 }
 
 export default async function PanelLayout({
