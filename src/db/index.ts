@@ -27,7 +27,18 @@ function olustur(): Db {
    */
   const client =
     globalForDb.__osClient ??
-    postgres(url, { prepare: false, max: 1, idle_timeout: 20 });
+    postgres(url, {
+      prepare: false,
+      max: 1,
+      /**
+       * Vercel'de sıcak bir örnek istekler arasında yaşamaya devam eder.
+       * idle_timeout kısa olursa her istekte yeniden TCP+TLS el sıkışması
+       * yapılır (Frankfurt'a gidiş-dönüş). 120 sn, sıcak örneğin bağlantıyı
+       * yeniden kullanmasını sağlar.
+       */
+      idle_timeout: 120,
+      connect_timeout: 15,
+    });
   globalForDb.__osClient = client;
   return drizzle(client, { schema });
 }

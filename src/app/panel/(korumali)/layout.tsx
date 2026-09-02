@@ -1,19 +1,25 @@
 import { redirect } from "next/navigation";
-import { eq, count } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 import { mevcutAdmin, cikisYap } from "@/actions/auth";
 import { PanelNav } from "@/components/panel/PanelNav";
 import { db } from "@/db";
-import { orders, reviews } from "@/db/schema";
 
 export const dynamic = "force-dynamic";
 
+/**
+ * Menü rozetleri için iki sayaç TEK sorguda alınır.
+ * Ayrı ayrı sorgulamak Frankfurt'taki veritabanına iki gidiş-dönüş demekti
+ * ve bu her panel sayfası açılışında tekrarlanıyordu.
+ */
 async function bekleyenSayilar() {
   try {
-    const [[s], [y]] = await Promise.all([
-      db.select({ n: count() }).from(orders).where(eq(orders.durum, "yeni")),
-      db.select({ n: count() }).from(reviews).where(eq(reviews.durum, "bekliyor")),
-    ]);
-    return { siparis: s?.n ?? 0, yorum: y?.n ?? 0 };
+    const sonuc = (await db.execute(sql`
+      SELECT
+        (SELECT count(*)::int FROM orders  WHERE durum = 'yeni')      AS siparis,
+        (SELECT count(*)::int FROM reviews WHERE durum = 'bekliyor')  AS yorum
+    `)) as unknown as { siparis: number; yorum: number }[];
+    const satir = Array.isArray(sonuc) ? sonuc[0] : undefined;
+    return { siparis: satir?.siparis ?? 0, yorum: satir?.yorum ?? 0 };
   } catch {
     // Veritabanı henüz kurulmadıysa panel yine de açılsın.
     return { siparis: 0, yorum: 0 };
@@ -25,10 +31,9 @@ export default async function PanelLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const admin = await mevcutAdmin();
+  // İkisi paralel: sayaç sorgusu kimlik doğrulamayı beklemesin.
+  const [admin, sayilar] = await Promise.all([mevcutAdmin(), bekleyenSayilar()]);
   if (!admin) redirect("/panel/giris");
-
-  const sayilar = await bekleyenSayilar();
 
   return (
     <div className="min-h-dvh md:flex bg-notr-100">

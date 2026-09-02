@@ -1,5 +1,6 @@
 "use server";
 
+import { cache } from "react";
 import { redirect } from "next/navigation";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
@@ -50,6 +51,17 @@ export type Admin = { id: string; ad: string; rol: string };
  * yetkiyi doğrulayamadığımız durumda içeri almayız.
  */
 export async function mevcutAdmin(): Promise<Admin | null> {
+  return adminGetir();
+}
+
+/**
+ * React cache(): aynı istek içinde kaç kez çağrılırsa çağrılsın
+ * Supabase Auth'a YALNIZCA BİR ağ isteği yapılır.
+ *
+ * Bu olmadan panel yerleşimi, sayfa ve her Server Action ayrı ayrı
+ * getUser() çağırıyordu — her biri Frankfurt'a gidiş-dönüş.
+ */
+const adminGetir = cache(async (): Promise<Admin | null> => {
   // Yerel demo: Supabase Auth yokken paneli görebilmek için.
   // Üretimde etkinleşmesi imkânsızdır (bkz. src/lib/demo.ts).
   if (DEMO_MODU) return { ...DEMO_ADMIN };
@@ -87,7 +99,7 @@ export async function mevcutAdmin(): Promise<Admin | null> {
     console.error("[auth] yönetici doğrulanamadı", e);
     return null;
   }
-}
+});
 
 /** Server Action'larda yetki kapısı. Yetki kontrolü TEK yerde toplanır. */
 export async function yetkiGerekli(): Promise<Admin> {
