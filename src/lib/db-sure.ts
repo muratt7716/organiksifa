@@ -31,6 +31,13 @@ export async function sureli<T>(
 
   try {
     return await Promise.race([islem, zamanAsimi]);
+  } catch (e) {
+    if (e instanceof VeritabaniSuresiDoldu) {
+      // Ölü bağlantıyı at: yoksa bu örnek her istekte asılı kalmaya devam eder.
+      const { baglantiyiSifirla } = await import("@/db");
+      baglantiyiSifirla();
+    }
+    throw e;
   } finally {
     if (sayac) clearTimeout(sayac);
   }
@@ -49,10 +56,8 @@ export async function sureliVeyaYedek<T>(
     return await sureli(islem(), ms);
   } catch (e) {
     if (e instanceof VeritabaniSuresiDoldu) {
-      console.error(`[db] ${e.message} — bağlantı sıfırlanıyor`);
-      // Ölü bağlantıyı at: yoksa bu örnek her istekte asılı kalmaya devam eder.
-      const { baglantiyiSifirla } = await import("@/db");
-      baglantiyiSifirla();
+      // Bağlantı sıfırlaması sureli() içinde yapıldı.
+      console.error(`[db] ${e.message} — boş durumla devam ediliyor`);
     } else {
       console.error("[db] okuma başarısız:", e);
     }

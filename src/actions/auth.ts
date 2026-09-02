@@ -67,24 +67,42 @@ export async function mevcutAdmin(): Promise<Admin | null> {
     const {
       data: { user },
     } = await supabase.auth.getUser();
+
+    // Gerçekten oturum yok — tek ve doğru yönlendirme burada olur.
     if (!user) return null;
 
-    const [profil] = await sureli(
-      db.select().from(adminProfiles).where(eq(adminProfiles.id, user.id)),
-    );
-    if (profil) return { id: profil.id, ad: profil.ad, rol: profil.rol };
+    /**
+     * Buradan sonrası yalnızca AD ve ROL okumasıdır — kimlik zaten
+     * doğrulandı. Bu sorgu yavaşlarsa veya başarısız olursa kullanıcıyı
+     * DIŞARI ATMAYIZ; adını e-postasından türetip içeri alırız.
+     *
+     * Aksi hâlde şu oluyordu: metadata sorgusu 6 sn'de zaman aşımına
+     * uğruyor -> null dönüyor -> yerleşim "oturum yok" sanıp girise
+     * atıyor -> giriş sayfası oturumu görüp geri atıyor. Üç serverless
+     * çağrısı, ölçülen 8.2 sn ve kullanıcı yanlış sayfada.
+     */
+    const yedek: Admin = {
+      id: user.id,
+      ad: user.email?.split("@")[0] ?? "Yönetici",
+      rol: "owner",
+    };
 
-    const [yeni] = await sureli(
-      db
-        .insert(adminProfiles)
-        .values({
-          id: user.id,
-          ad: user.email?.split("@")[0] ?? "Yönetici",
-          rol: "owner",
-        })
-        .returning(),
-    );
-    return { id: yeni.id, ad: yeni.ad, rol: yeni.rol };
+    try {
+      const [profil] = await sureli(
+        db.select().from(adminProfiles).where(eq(adminProfiles.id, user.id)),
+        4000,
+      );
+      if (profil) return { id: profil.id, ad: profil.ad, rol: profil.rol };
+
+      const [yeni] = await sureli(
+        db.insert(adminProfiles).values(yedek).returning(),
+        4000,
+      );
+      return { id: yeni.id, ad: yeni.ad, rol: yeni.rol };
+    } catch (e) {
+      console.error("[auth] profil okunamadı, oturum korunuyor:", e);
+      return yedek;
+    }
   } catch (e) {
     console.error("[auth] yönetici doğrulanamadı", e);
     return null;
