@@ -1,9 +1,14 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { supabaseSunucu } from "@/lib/supabase/server";
+import {
+  BASLIK_KULLANICI_ID,
+  BASLIK_EPOSTA,
+} from "@/lib/supabase/middleware";
 import { db } from "@/db";
 import { adminProfiles } from "@/db/schema";
 import { DEMO_MODU, DEMO_ADMIN } from "@/lib/demo";
@@ -54,6 +59,25 @@ export async function mevcutAdmin(): Promise<Admin | null> {
   // Yerel demo: Supabase Auth yokken paneli görebilmek için.
   // Üretimde etkinleşmesi imkânsızdır (bkz. src/lib/demo.ts).
   if (DEMO_MODU) return { ...DEMO_ADMIN };
+
+  /**
+   * HIZLI YOL: proxy kullanıcıyı zaten doğruladı ve başlığa yazdı.
+   * Buradan okumak, istek başına bir Supabase Auth turu ve bir
+   * admin_profiles sorgusu birden siliyor.
+   *
+   * Başlık güvenli: proxy her istekte önce siliyor, sonra yalnızca
+   * doğrulanmış kullanıcı için yazıyor (bkz. supabase/middleware.ts).
+   */
+  const h = await headers();
+  const kimlik = h.get(BASLIK_KULLANICI_ID);
+  if (kimlik) {
+    const eposta = h.get(BASLIK_EPOSTA);
+    return {
+      id: kimlik,
+      ad: eposta?.split("@")[0] ?? "Yönetici",
+      rol: "owner",
+    };
+  }
 
   try {
     if (

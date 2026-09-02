@@ -2,7 +2,27 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { DEMO_MODU } from "@/lib/demo";
 
+/**
+ * Proxy, doğruladığı kullanıcıyı bu başlıklarla aşağı geçirir; panel
+ * yerleşimi ikinci bir getUser() ve admin_profiles sorgusu yapmak zorunda
+ * kalmaz. İstek başına bir ağ turu ve bir veritabanı sorgusu tasarruf.
+ *
+ * GÜVENLİK: başlık dışarıdan gönderilebilir. Bu yüzden her istekte ÖNCE
+ * siliniyor, sonra yalnızca doğrulanmış kullanıcı varsa yazılıyor.
+ */
+export const BASLIK_KULLANICI_ID = "x-os-kullanici-id";
+export const BASLIK_EPOSTA = "x-os-eposta";
+
 export async function oturumYenile(request: NextRequest) {
+  /**
+   * GÜVENLİK: bu başlıkları dışarıdan gönderilmiş olabilir diye ÖNCE
+   * siliyoruz. Aşağıya yalnızca bizim doğrulayıp yazdığımız değer geçer.
+   * Bu satırlar olmadan biri kendi başlığını gönderip yönetici gibi
+   * davranabilirdi.
+   */
+  request.headers.delete(BASLIK_KULLANICI_ID);
+  request.headers.delete(BASLIK_EPOSTA);
+
   let response = NextResponse.next({ request });
 
   // Yerel demo: giriş kontrolü atlanır (bkz. src/lib/demo.ts).
@@ -77,6 +97,13 @@ export async function oturumYenile(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.pathname = "/panel";
     return NextResponse.redirect(url);
+  }
+
+  // Doğrulanmış kullanıcıyı aşağı geçir: yerleşim tekrar sormasın.
+  if (user) {
+    request.headers.set(BASLIK_KULLANICI_ID, user.id);
+    if (user.email) request.headers.set(BASLIK_EPOSTA, user.email);
+    response = NextResponse.next({ request });
   }
 
   return response;
