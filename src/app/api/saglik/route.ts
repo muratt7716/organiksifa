@@ -41,6 +41,19 @@ export async function GET() {
     );
   }
 
+  // Supabase Auth'a giden ağ çağrısının süresi — panel her istekte
+  // bunu iki kez yapıyor (proxy + yerleşim), o yüzden ayrı ölçülüyor.
+  let authMs: number | string = "olculmedi";
+  try {
+    const ta = Date.now();
+    const { supabaseSunucu } = await import("@/lib/supabase/server");
+    const sb = await supabaseSunucu();
+    await sureli(sb.auth.getUser(), 8000);
+    authMs = `${Date.now() - ta} ms`;
+  } catch (e) {
+    authMs = `HATA: ${e instanceof Error ? e.message : String(e)}`;
+  }
+
   try {
     const t0 = Date.now();
     await sureli(db.execute(sql`SELECT 1`), 5000);
@@ -63,7 +76,12 @@ export async function GET() {
       durum: "iyi",
       hedef,
       ortam,
-      sureler: { ping: `${pingMs} ms`, sorgu: `${sorguMs} ms`, toplam: `${Date.now() - basladi} ms` },
+      sureler: {
+        supabaseAuth: authMs,
+        ping: `${pingMs} ms`,
+        sorgu: `${sorguMs} ms`,
+        toplam: `${Date.now() - basladi} ms`,
+      },
       veri: { yayindaUrun: satir?.urun ?? null, siparis: satir?.siparis ?? null },
     });
   } catch (e) {

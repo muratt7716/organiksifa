@@ -111,6 +111,111 @@ Kozmetik üründür. Gözle temasından kaçınınız.`,
     setIcerigi: null,
     oneCikan: true,
   },
+  {
+    klasor: "urun-d-vitamini",
+    baslik: "D Vitamini Altın Yağ Karışımı",
+    slug: "d-vitamini-altin-yag-karisimi",
+    kategoriSlug: "bitkisel-yaglar",
+    fiyat: "890.00",
+    eskiFiyat: "1090.00",
+    kisa: "Altı bitkisel yağın damlalıklı şişede birleştiği günlük destek karışımı.",
+    aciklama: `İçindekiler: İnci Çekirdeği Yağı, Çörekotu Yağı, Avokado Yağı, Susam Yağı, Üzüm Çekirdeği Yağı, Uçukindi Yağı.
+
+Bitkisel yağların bir arada sunulduğu, damlalıklı 50 ml cam şişede karışım. Günlük rutine kolayca eklenebilir.
+
+Kullanım: Günde bir kez, tercihen sabah aç karnına birkaç damla.
+
+Saklama: Serin ve kuru yerde, doğrudan güneş ışığından uzakta saklayınız. Ambalajı açıldıktan sonra ağzı kapalı tutunuz.
+
+Takviye edici gıdadır. Normal beslenmenin yerine geçmez. Hamilelik, emzirme döneminde veya düzenli ilaç kullanıyorsanız hekiminize danışınız.`,
+    setIcerigi: null,
+    oneCikan: true,
+  },
+  {
+    klasor: "urun-merhem",
+    baslik: "Hücre Yenileyici Merhem",
+    slug: "hucre-yenileyici-merhem",
+    kategoriSlug: "cilt-bakimi",
+    fiyat: "640.00",
+    eskiFiyat: null,
+    kisa: "Aloe vera, centella asiatica ve jojoba yağıyla zenginleştirilmiş bakım merhemi.",
+    aciklama: `Doğal içerikler: Aloe Vera Özü, Centella Asiatica (Asya Pençesi) Özü, Jojoba Yağı, Üzüm Çekirdeği Yağı, E Vitamini, Lavanta Özü, Sarı Kantaron Özü.
+
+Bitkisel özlerle hazırlanmış, günlük kullanıma uygun bakım merhemi. Koyu amber cam kavanozda sunulur.
+
+Kullanım alanları: Yüz ve boyun bakımı, kuru ve tahriş olmuş cilt, vücut bakımı.
+
+Kullanım şekli: Temiz ve kuru cilde, ihtiyaç duyulan bölgeye ince bir tabaka hâlinde uygulayınız. Sabah ve akşam düzenli kullanım önerilir.
+
+Paraben içermez. Koruyucu içermez. Tüm cilt tipleri için uygundur. İlk kullanımdan önce küçük bir alanda deneyiniz.`,
+    setIcerigi: null,
+    oneCikan: true,
+  },
+  {
+    klasor: "urun-bakim-seti",
+    baslik: "Doğal Bakım Seti — Krem, Solüsyon, Katran Sabunu, Kabak Lifi",
+    slug: "dogal-bakim-seti",
+    kategoriSlug: "setler",
+    fiyat: "1250.00",
+    eskiFiyat: "1490.00",
+    kisa: "Dört ürünün bir arada sunulduğu, adım adım kullanılan doğal cilt bakım seti.",
+    aciklama: `Set içeriği dört üründen oluşur ve sırayla kullanılmak üzere hazırlanmıştır:
+
+1. Adım — Solüsyonu ilgili bölgeye püskürtün ve kurumasını bekleyin.
+2. Adım — Katran sabunu ile cildinizi nazikçe temizleyin, ılık su ile durulayın.
+3. Adım — Kremi temiz cilde ince bir tabaka hâlinde uygulayın.
+4. Adım — Kabak lifi ile cildi nazikçe ovun.
+
+Doğal içerikler kullanılmıştır. Cilt dostu formüller. Düzenli kullanımda daha iyi sonuç alınır.
+
+Not: Bu ürünler kozmetik ürünlerdir; hastalıkları önleme, tedavi etme veya iyileştirme amacı taşımaz.`,
+    setIcerigi: ["Bakım kremi", "Bakım solüsyonu", "Katran sabunu", "Kabak lifi"],
+    oneCikan: true,
+  },
+  {
+    klasor: "urun-detoks-seti",
+    baslik: "Zayıflama ve Detoks Seti",
+    slug: "zayiflama-ve-detoks-seti",
+    kategoriSlug: "cay-detoks",
+    fiyat: "980.00",
+    eskiFiyat: null,
+    kisa: "Bitki çayı ve konsantre içeceğin birlikte kullanıldığı günlük destek seti.",
+    aciklama: `Set içeriği:
+
+• Sundetox Bitki Çayı — 100 g (50 × 2 g süzen poşet). İçeriğinde cascara sagrada, yeşil çay, oolong ve zencefil bulunur.
+• Sandetox Konsantre İçecek — 330 ml. Yaban mersinli, ananas sirkeli konsantre.
+
+Kullanım şekli: Sabah ve akşam aç karnına 1 bardak bitki çayı tüketilir. Çayın ardından konsantre içecekten 2 tatlı kaşığı alınır. Çay aç, konsantre tok olarak kullanılır.
+
+Doğal içeriklerle günlük destek. Takviye edici gıdadır, normal beslenmenin yerine geçmez.`,
+    setIcerigi: ["Sundetox Bitki Çayı 100 g", "Sandetox Konsantre İçecek 330 ml"],
+    oneCikan: false,
+  },
+  {
+    klasor: "urun-kan-yapici-set",
+    baslik: "Kan Yapıcı Set — Çelik Suyu, Macun, D Vitamini, Mumiyo",
+    slug: "kan-yapici-set",
+    kategoriSlug: "setler",
+    fiyat: "1350.00",
+    eskiFiyat: "1600.00",
+    kisa: "Çelik suyu, bitkisel macun, damlalıklı D vitamini ve mumiyo içeren takviye seti.",
+    aciklama: `Set içeriği:
+
+1. Çelik Suyu — Şişede özel bitkisel solüsyon.
+2. Kan Yapıcı Macun — Koyu cam kavanozda bitkisel macun.
+3. D Vitamini — Amber cam şişede damlalık.
+4. Mumiyo — Tablet formunda gümüş blister ambalajda doğal takviye.
+
+Kullanım:
+• Çelik suyu: Sabah-akşam aç karnına bir yemek kaşığı içilir.
+• Kan yapıcı macun: Sabah-akşam aç karnına bir tatlı kaşığı yenilir.
+• D vitamini: Sabah-akşam aç karnına büyükler bir çay kaşığı, küçükler yarım çay kaşığı.
+• Mumiyo: Sabah-akşam aç karnına bir tane alınır.
+
+Takviye edici gıdadır. Normal beslenmenin yerine geçmez.`,
+    setIcerigi: ["Çelik Suyu", "Kan Yapıcı Macun", "D Vitamini", "Mumiyo Tablet"],
+    oneCikan: true,
+  },
 ];
 
 async function main() {
