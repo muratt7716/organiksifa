@@ -17,7 +17,16 @@ export class VeritabaniSuresiDoldu extends Error {
   }
 }
 
-const VARSAYILAN_MS = 6000;
+/**
+ * Kısa tutuluyor. Ölçüm: panel sayfaları dönüşümlü olarak 1 sn / 6.2 sn
+ * sürüyordu ve 6.2 sn'nin tamamı beklenen zaman aşımıydı.
+ *
+ * Vercel istekleri birden fazla serverless örneğine dağıtıyor; donmuş bir
+ * örneğin bağlantısını havuz çoktan kapatmış oluyor. O bağlantıyı beklemek
+ * yerine hızlıca pes edip taze bağlantıyla YENİDEN denemek çok daha ucuz:
+ * yeni bağlantı kurmak ölçülen ~600 ms.
+ */
+const VARSAYILAN_MS = 2500;
 
 export async function sureli<T>(
   islem: Promise<T>,
@@ -55,12 +64,21 @@ export async function sureliVeyaYedek<T>(
   try {
     return await sureli(islem(), ms);
   } catch (e) {
-    if (e instanceof VeritabaniSuresiDoldu) {
-      // Bağlantı sıfırlaması sureli() içinde yapıldı.
-      console.error(`[db] ${e.message} — boş durumla devam ediliyor`);
-    } else {
+    if (!(e instanceof VeritabaniSuresiDoldu)) {
       console.error("[db] okuma başarısız:", e);
+      return yedek;
     }
-    return yedek;
+
+    /**
+     * İlk deneme ölü bağlantıya takıldı; sureli() onu attı.
+     * Şimdi TAZE bağlantıyla bir kez daha deniyoruz — sayfa boş
+     * görünmesin diye. Bu deneme genelde ~600 ms sürer.
+     */
+    try {
+      return await sureli(islem(), ms + 1500);
+    } catch (e2) {
+      console.error("[db] taze bağlantıyla da okunamadı:", e2);
+      return yedek;
+    }
   }
 }

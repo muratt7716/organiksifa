@@ -25,25 +25,14 @@ function olustur(): Db {
    *
    * Yerel demo (PGlite soketi) de aynı ayarla sorunsuz çalışır.
    */
-  /**
-   * idle_timeout KISA tutulmalı.
-   *
-   * Serverless'te fonksiyon çağrılar arasında dondurulur. Uzun bir
-   * idle_timeout, donmuş örnekte açık kalan bir TCP bağlantısı bırakır;
-   * havuz o bağlantıyı kendi tarafından kapatır ama örnek bunu bilmez ve
-   * uyandığında ölü bağlantıya sorgu göndererek zaman aşımına uğrar.
-   *
-   * 20 saniye, bağlantının donmadan önce kapanmasını sağlar.
-   */
-  const client =
-    globalForDb.__osClient ??
-    postgres(url, {
-      prepare: false,
-      max: 1,
-      idle_timeout: 20,
-      max_lifetime: 60 * 5,
-      connect_timeout: 10,
-    });
+  const client = postgres(url, {
+    prepare: false,
+    max: 1,
+    idle_timeout: 20,
+    max_lifetime: 60 * 5,
+    connect_timeout: 10,
+  });
+
   globalForDb.__osClient = client;
   return drizzle(client, { schema });
 }
