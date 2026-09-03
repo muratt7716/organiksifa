@@ -4,6 +4,7 @@ import { yayindakiUrunler, aktifKategoriler, urunFotografiMi } from "@/lib/catal
 import { ayarlariGetir } from "@/lib/settings";
 import { UrunKarti } from "@/components/magaza/UrunKarti";
 import { HeroVitrin } from "@/components/magaza/HeroVitrin";
+import Image from "next/image";
 import { ZeytinDali, Adacayi, Papatya, Damla } from "@/components/magaza/Botanik";
 import { fiyatBicimle, sayi } from "@/lib/price";
 import { organizationLd, websiteLd, itemListLd, jsonLd } from "@/lib/seo";
@@ -222,15 +223,17 @@ export default async function AnaSayfa() {
           ---------------------------------------------------------------------- */}
       <section className="bg-yesil-700 text-notr-0 overflow-hidden">
         <div className="mx-auto max-w-6xl px-4 py-20 sm:py-28 grid lg:grid-cols-2 gap-12 items-center">
-          <div
-            className="relative aspect-[4/3] sahne-perde rounded-panel bg-yesil-800
-                       grid place-items-center overflow-hidden"
-          >
-            <ZeytinDali
-              className="absolute -left-8 bottom-0 w-[300px] text-yesil-300 opacity-40"
+          {/* Metin "küçük partiler hâlinde hazırlanıyor" diyor; fotoğraf onun
+              kanıtı. Ürün fotoğrafı değil — o zaten sayfanın başında. */}
+          <div className="relative aspect-[4/3] sahne-perde rounded-panel bg-yesil-800 overflow-hidden">
+            <Image
+              src="/marka/tarif.jpg"
+              alt="Etiketsiz amber cam kavanozlar, pirinç terazi, havanda dövülmüş kuru otlar ve adaçayı demeti"
+              fill
+              /* Masaüstünde iki sütunlu ızgaranın yarısı (~536px), altında tam genişlik. */
+              sizes="(max-width: 1023px) 100vw, 536px"
+              className="object-cover"
             />
-            <Adacayi className="absolute right-6 top-2 w-[130px] text-yesil-300 opacity-40" />
-            <Papatya className="w-24 text-amber-300 opacity-70 suzulen" />
           </div>
 
           <div className="space-y-5">

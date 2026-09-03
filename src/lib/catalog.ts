@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { eq, and, asc, desc, inArray } from "drizzle-orm";
 import { db } from "@/db";
 import { products, productImages, categories } from "@/db/schema";
@@ -63,15 +64,22 @@ function normalize(satirlar: unknown[]): KatalogUrunu[] {
   return satirlar as KatalogUrunu[];
 }
 
-export async function yayindakiUrunler(opts?: {
-  kategoriSlug?: string;
-  oneCikan?: boolean;
-  limit?: number;
-}): Promise<KatalogUrunu[]> {
+/**
+ * DİKKAT: cache() argümanları referansla karşılaştırır. Nesne verilirse iki
+ * çağrı yeri asla eşleşmez ve bellekleme çalışmaz. Bu yüzden anahtar metne
+ * çevriliyor — aynı seçeneklerle yapılan çağrılar tek sorguya iniyor.
+ */
+const urunleriOku = cache(async (anahtar: string): Promise<KatalogUrunu[]> => {
+  const opts = JSON.parse(anahtar) as {
+    kategoriSlug: string | null;
+    oneCikan: boolean | null;
+    limit: number | null;
+  };
+
   return sureliVeyaYedek(async () => {
     const kosullar = [eq(products.yayinda, true)];
-    if (opts?.kategoriSlug) kosullar.push(eq(categories.slug, opts.kategoriSlug));
-    if (opts?.oneCikan) kosullar.push(eq(products.oneCikan, true));
+    if (opts.kategoriSlug) kosullar.push(eq(categories.slug, opts.kategoriSlug));
+    if (opts.oneCikan) kosullar.push(eq(products.oneCikan, true));
 
     const q = db
       .select(KAPAK_ALANLARI)
@@ -84,12 +92,26 @@ export async function yayindakiUrunler(opts?: {
       .where(and(...kosullar))
       .orderBy(asc(products.sira), desc(products.createdAt));
 
-    const satirlar = opts?.limit ? await q.limit(opts.limit) : await q;
+    const satirlar = opts.limit ? await q.limit(opts.limit) : await q;
     return normalize(satirlar);
   }, []);
+});
+
+export function yayindakiUrunler(opts?: {
+  kategoriSlug?: string;
+  oneCikan?: boolean;
+  limit?: number;
+}): Promise<KatalogUrunu[]> {
+  return urunleriOku(
+    JSON.stringify({
+      kategoriSlug: opts?.kategoriSlug ?? null,
+      oneCikan: opts?.oneCikan ?? null,
+      limit: opts?.limit ?? null,
+    }),
+  );
 }
 
-export async function urunDetay(slug: string) {
+export const urunDetay = cache(async (slug: string) => {
   return sureliVeyaYedek(async () => {
     const [urun] = await db
       .select()
@@ -110,7 +132,7 @@ export async function urunDetay(slug: string) {
 
     return { urun, gorseller, kategori: kategori[0] ?? null };
   }, null);
-}
+});
 
 export async function benzerUrunler(
   kategoriId: string | null,
@@ -122,7 +144,7 @@ export async function benzerUrunler(
   return hepsi.filter((u) => u.id !== haricId).slice(0, limit);
 }
 
-export async function aktifKategoriler() {
+export const aktifKategoriler = cache(async () => {
   return sureliVeyaYedek(
     () =>
       db
@@ -132,7 +154,7 @@ export async function aktifKategoriler() {
         .orderBy(asc(categories.sira), asc(categories.ad)),
     [] as (typeof categories.$inferSelect)[],
   );
-}
+});
 
 /** Sepet sayfası için — istemciden gelen id listesiyle güncel ürün bilgisi. */
 export async function sepetUrunleri(idler: string[]): Promise<KatalogUrunu[]> {

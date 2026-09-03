@@ -31,6 +31,21 @@ function olustur(): Db {
     idle_timeout: 20,
     max_lifetime: 60 * 5,
     connect_timeout: 10,
+
+    /**
+     * OS_SQL_LOG=1 ile her sorgu süresiyle birlikte yazılır.
+     *
+     * "Sayfa 1.3 saniye sürüyor" bilgisi tek başına işe yaramıyor; asıl soru
+     * kaç sorgu atıldığı. Supabase'e her gidiş-dönüş ~48 ms (ölçüldü), yani
+     * sorgu SAYISI doğrudan sayfa süresi demek. Bu kanca onu görünür kılıyor.
+     */
+    debug:
+      process.env.OS_SQL_LOG === "1"
+        ? (_bag, sorgu) => {
+            const tek = sorgu.replace(/\s+/g, " ").trim().slice(0, 110);
+            console.log(`[sql] ${tek}`);
+          }
+        : undefined,
   });
 
   globalForDb.__osClient = client;

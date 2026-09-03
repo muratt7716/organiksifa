@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { settings } from "@/db/schema";
@@ -32,12 +33,21 @@ export const VARSAYILAN_AYAR: Ayarlar = {
   guncellendiAt: new Date(),
 };
 
-export async function ayarlariGetir(): Promise<Ayarlar> {
+/**
+ * Ayarlar bir sayfada birden çok yerden okunuyor: yerleşim (duyuru şeridi),
+ * generateMetadata (site adı), ürün sayfası (kargo limiti), footer (iletişim).
+ *
+ * cache() bunları TEK sorguya indiriyor. Ölçüm: ürün sayfası 18 sorgu atıyordu,
+ * bunun 3'ü aynı ayarlar okumasıydı. Supabase'e her gidiş-dönüş ~48 ms.
+ *
+ * Bellekleme istek başınadır — bir sonraki istekte veri yine taze okunur.
+ */
+export const ayarlariGetir = cache(async (): Promise<Ayarlar> => {
   return sureliVeyaYedek(async () => {
     const [satir] = await db.select().from(settings).where(eq(settings.id, 1));
     return satir ?? VARSAYILAN_AYAR;
   }, VARSAYILAN_AYAR);
-}
+});
 
 /** Kargo hesabı için sayıya çevrilmiş ayar. */
 export function kargoAyari(a: Ayarlar) {
