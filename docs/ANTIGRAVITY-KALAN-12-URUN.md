@@ -11,8 +11,9 @@ Sonuç: `06`, `07`, `08` üçü de "amber cam kavanoz + parlak siyah kapak +
 travertin altlık + göz hizası + yumuşak ışık". Katalogda yan yana gelince
 tek ürünün tekrarı gibi duruyorlar.
 
-`05`'te ise "tamamen boş olsun" kuralı geri tepti — bembeyaz düz silindir
-ürün gibi değil, **boş kap** gibi duruyor.
+`05`'te ise "etiket olmasın" kuralı geri tepti — bembeyaz düz silindir ürün
+gibi değil, **boş kap** gibi duruyor. Kural değişti: artık etiket var,
+üzeri boş (aşağıdaki **Etiket kuralı** bölümüne bak).
 
 **Bu turda kabın kendisi değişiyor:** kavanoz, tüp, pompalı şişe, teneke,
 tub. Malzeme (amber cam, buzlu cam, mor cam, mat seramik, alüminyum), kapak
@@ -31,41 +32,54 @@ STYLE: Clean commercial product photography. Sharp focus on the product,
 FRAMING: Product fills about 65-70% of the frame with generous breathing
 space. Square 1:1 aspect ratio, 1600x1600 or larger.
 
-PALETTE: Muted and natural — deep forest green, warm amber, pale bone,
-soft cream, slate. No neon, no candy colors, no heavy saturation.
+PALETTE: Muted and natural — deep forest green, warm amber, pale bone, soft
+cream, slate. No neon, no candy colors, no heavy saturation.
 
-CRITICAL — the packaging must be COMPLETELY BLANK:
-no text, no letters, no words, no numbers, no labels, no logos, no brand
-names, no barcodes, no symbols, no watermarks. Nothing written anywhere.
-The container gets its character from its SHAPE, MATERIAL and COLOR —
-never from printing.
+LABEL RULE — read carefully, this is the important one:
+
+The container SHOULD have a real, physical label where a label belongs — a
+clean rectangle or oval of matte paper or vinyl, slightly raised, with
+visible edges and a soft shadow, wrapped naturally around the curve of the
+container. It must look like a genuine applied label.
+
+But the label surface must be COMPLETELY EMPTY — a solid flat color with
+absolutely nothing printed on it: no text, no letters, no words, no numbers,
+no logos, no brand names, no barcodes, no symbols, no icons, no decorative
+marks, no watermarks. A clean unprinted label, as it looks before printing.
+
+This is deliberate: the real text is added afterwards in post-production. A
+container with NO label at all reads as an empty unlabelled container; a
+container with a blank label reads as a finished product.
 
 ALSO AVOID: no people, no hands, no faces, no infographic panels, no icons,
-no borders or frames, no collage, no split screens, no poster layout,
-no marketing badges.
+no borders or frames, no collage, no split screens, no poster layout, no
+marketing badges.
 ```
 
 ---
 
-### Neden ambalajda yazı yok
+### Etiket kuralı — neden böyle
 
-İki sebep:
+İlk turda "etiket olmasın" yazmıştım ve şişeler **boş kap** gibi çıktı.
+Hata bendeydi: yazıyı yasaklarken etiket **alanını** da yasaklamışım.
+
+Yeni kural: **etiket var, üzeri boş.** Kapta gerçek bir etiket duruyor —
+kenarları belli, hafif kabarık, kabın kavisine sarılmış — ama üzerinde
+hiçbir şey yazmıyor. Böylece kap bitmiş ürün gibi görünüyor.
+
+Yazının AI tarafından basılmamasının iki sebebi var:
 
 1. **AI yazıyı bozuk üretiyor.** "PROBİYOTİK" isteyince "PROBIYOTIIK" ya da
    anlamsız harfler çıkıyor, Türkçe karakterlerde daha da beter. Bozuk yazılı
-   etiket, etiketsiz kaptan kötü durur.
+   etiket her şeyden kötü durur.
 2. **Referans görsellerdeki etiketler başka firmalara ait** (Probitox,
    Şifaver, Dermolif, NÖVLEX, GENIXIR). Birebir üretmek onların markasını
    bizim ürün sayfamıza koymak olurdu.
 
-**Ama kural her kap için aynı işlemiyor.** Amber kavanoz etiketsiz de sade
-durur. Beyaz takviye şişesini tanımlayan şey ise etiketidir — etiketi
-kaldırınca "etiketi düşmüş" görünür. O tür kaplarda yazı yerine **renk,
-kapak ve kabartmayla** kimlik veriliyor (bkz. 05).
-
-İleride istersen görselleri boş üretip **etiketi kendimiz basabiliriz** —
-`sharp` ile kendi tipografimizle net ve doğru Türkçe metin eklenir. Daha
-çok iş ama sonucu gerçek ürün fotoğrafı olur.
+**Yazıyı sonradan biz basacağız.** Boş etiketin üzerine `sharp` ile kendi
+tipografimizle (Newsreader + Inter, marka yeşili) net ve doğru Türkçe metin
+eklenir. Bu şekilde hem bozulma olmaz, hem etiket gerçekten bizim markamız
+olur. Görseller geldiğinde bunu yapacağım.
 
 ---
 
@@ -125,12 +139,9 @@ görselin üzerine yazıyor, panelde ayrıca bir şey yapmana gerek yok.
 
 ## 05 · Probiyotik Konsantre İçecek — YENİDEN (2. deneme)
 
-İlk denemede beyaz düz şişe **boş kap** gibi durdu. Sebep: beyaz takviye
-şişesini tanımlayan şey etiketidir; etiketi kaldırınca "etiketi düşmüş"
-görünüyor. Amber kavanozda bu sorun yok — o etiketsiz de sade durur.
-
-Çözüm: şişeye **yazı yerine renk ve biçim kimliği** ver. Koyu amber gövde,
-renkli kapak, kabartma halkalar. Etiketsiz ama bilerek tasarlanmış görünür.
+İlk denemede beyaz düz şişe **boş kap** gibi durdu. Sebep: etiket alanını da
+yasaklamıştım. Şimdi şişede gerçek bir etiket var, üzeri boş — ayrıca amber
+gövde ve yeşil kapakla kendi kimliği de var.
 
 ```text
 A tall clear drinking glass filled with deep cranberry-red probiotic drink,
@@ -138,11 +149,12 @@ condensation beading down the outside, standing on a pale white marble
 surface. Behind it and slightly to the right, softly out of focus, stands a
 tall supplement bottle in warm amber-brown HDPE plastic with subtle moulded
 horizontal ribbing around its shoulder and a matte forest-green screw cap.
-The bottle is completely blank — no label, no text, no logo — but its amber
-color, ribbed shoulder and green cap give it a designed identity, so it does
-not read as an empty unlabelled container. Three fresh red cranberries and
-two small glossy green leaves at the base of the glass. Bright airy daylight
-from the left, clean soft shadows. The drink is the hero.
+The bottle carries a clean unprinted label — a plain cream-colored matte
+paper rectangle with crisp edges, wrapped naturally around the curve of the
+bottle, with absolutely nothing written or printed on it. Three fresh red
+cranberries and two small glossy green leaves at the base of the glass.
+Bright airy daylight from the left, clean soft shadows. The drink is the
+hero; the bottle is supporting context.
 ```
 
 ---
@@ -155,8 +167,8 @@ kremin dokusu görünüyor.**
 ```text
 A squat, wide frosted white glass cosmetic jar with a brushed gold screw lid
 resting beside it, tilted against the jar. The jar is open, revealing a
-smooth swirl of ivory-colored cream inside catching the light. Completely
-blank jar and lid — no label, no engraving. Shot from a three-quarter angle
+smooth swirl of ivory-colored cream inside catching the light. The label on
+it is completely blank — see LABEL RULE. Shot from a three-quarter angle
 slightly above, looking down into the jar. Warm ivory seamless background.
 Soft diffused light, gentle gradient shadow. Two argan nuts and one small
 white jasmine flower resting flat on the surface to the left.
@@ -171,11 +183,11 @@ Sorun: kavanoz tekrarı. Çözüm: **tüp** — nemlendirici zaten tüpte gelir.
 ```text
 A standing cosmetic squeeze tube in matte sage green, with a crimped flat
 seal at the top and a white flip-top cap at the bottom, standing upright on
-its cap. Completely blank tube — no text, no label, no printing anywhere.
-Shot straight on at eye level. Cool white seamless background with a crisp,
-defined shadow falling to the right from hard directional light. A single
-fresh aloe vera leaf segment cut open showing clear gel lies flat beside the
-tube, plus three small water droplets on the surface.
+its cap. The label on it is completely blank — see LABEL RULE. Shot straight
+on at eye level. Cool white seamless background with a crisp, defined shadow
+falling to the right from hard directional light. A single fresh aloe vera
+leaf segment cut open showing clear gel lies flat beside the tube, plus
+three small water droplets on the surface.
 ```
 
 ---
@@ -186,12 +198,12 @@ Sorun: kavanoz tekrarı. Çözüm: **mat seramik geniş sığ tub, ahşap kapak.
 
 ```text
 A wide, shallow matte cream-colored ceramic tub with a natural light wood
-screw lid sitting slightly askew on top, on a warm ivory seamless background.
-Completely blank tub and lid — no text, no burn-mark, no logo. Shot from a
-slightly elevated angle so the round lid reads as a circle. Warm golden light
-from the upper left. Half a fresh coconut showing white flesh sits behind and
-to the right, softly out of focus. A small smear of white cream on the
-surface in front of the tub.
+screw lid sitting slightly askew on top, on a warm ivory seamless
+background. The label on it is completely blank — see LABEL RULE. Shot from
+a slightly elevated angle so the round lid reads as a circle. Warm golden
+light from the upper left. Half a fresh coconut showing white flesh sits
+behind and to the right, softly out of focus. A small smear of white cream
+on the surface in front of the tub.
 ```
 
 ---
@@ -210,13 +222,13 @@ surface in front of the tub.
   Paraben, sülfat ve renklendirici içermez.
 
 ```text
-A large, tall cosmetic tub made of deep violet-black glass with a matte black
-screw lid, standing on a mid-grey seamless background. Completely blank — no
-label, no text. Shot from a low hero angle looking slightly upward so the tub
-feels substantial and heavy. Dramatic hard side light from the right rakes
-across the glass, leaving a deep shadow to the left and a bright rim highlight
-down the right edge. Two glossy dark green bay leaves lying flat in the
-foreground shadow.
+A large, tall cosmetic tub made of deep violet-black glass with a matte
+black screw lid, standing on a mid-grey seamless background. The label on it
+is completely blank — see LABEL RULE. Shot from a low hero angle looking
+slightly upward so the tub feels substantial and heavy. Dramatic hard side
+light from the right rakes across the glass, leaving a deep shadow to the
+left and a bright rim highlight down the right edge. Two glossy dark green
+bay leaves lying flat in the foreground shadow.
 ```
 
 ---
@@ -232,11 +244,11 @@ foreground shadow.
 ```text
 A shallow round brushed-aluminium tin, open, filled to the brim with a warm
 golden-amber balm with a soft glossy surface. The tin lid leans upright
-against the side of the tin. Completely blank tin and lid — no stamp, no
-embossing, no text. Shot flat lay directly from above, perfectly top-down, on
-a pure white surface. Even, flat, shadowless studio light. Three bright orange
-calendula flowers and a scattering of loose orange petals arranged around the
-tin in the frame.
+against the side of the tin. The label on it is completely blank — see LABEL
+RULE. Shot flat lay directly from above, perfectly top-down, on a pure white
+surface. Even, flat, shadowless studio light. Three bright orange calendula
+flowers and a scattering of loose orange petals arranged around the tin in
+the frame.
 ```
 
 ---
@@ -252,11 +264,12 @@ tin in the frame.
 
 ```text
 A small frosted clear glass pump bottle with a slim white pump dispenser and
-a clear protective cap removed and lying beside it. Completely blank bottle —
-no label, no text. Shot straight on at eye level on a cool white seamless
-background with a soft even shadow directly beneath. Clean, clinical,
-pharmacy-like mood. A small sprig of fresh tea tree leaves and a tiny neat
-mound of pale grey-green clay powder placed to the right of the bottle.
+a clear protective cap removed and lying beside it. The label on it is
+completely blank — see LABEL RULE. Shot straight on at eye level on a cool
+white seamless background with a soft even shadow directly beneath. Clean,
+clinical, pharmacy-like mood. A small sprig of fresh tea tree leaves and a
+tiny neat mound of pale grey-green clay powder placed to the right of the
+bottle.
 ```
 
 ---
@@ -273,11 +286,11 @@ mound of pale grey-green clay powder placed to the right of the bottle.
 ```text
 A very small, delicate cosmetic jar in pale mint-green frosted glass with a
 polished rose-gold metal screw lid, and a slim rose-gold applicator wand
-resting on the surface beside it. Completely blank jar — no text, no logo.
-Shot as a close macro at a three-quarter angle so the jar fills the frame
-generously. Soft grey-white background, very soft wraparound light with
-almost no hard shadow. Three roasted coffee beans and one tiny white jasmine
-blossom placed close to the jar base.
+resting on the surface beside it. The label on it is completely blank — see
+LABEL RULE. Shot as a close macro at a three-quarter angle so the jar fills
+the frame generously. Soft grey-white background, very soft wraparound light
+with almost no hard shadow. Three roasted coffee beans and one tiny white
+jasmine blossom placed close to the jar base.
 ```
 
 ---
@@ -293,12 +306,12 @@ blossom placed close to the jar base.
 
 ```text
 A glossy white plastic squeeze tube lying at a diagonal angle on a bright
-white surface, with a warm amber-orange flip cap. The tube is completely
-blank — no text, no label, no printing. A small ribbon of white cream has
-been squeezed out onto the surface near the cap. Shot from three-quarters
-above. Hard bright sunlight from the upper left casting a sharp defined
-shadow, with the dappled shadow of palm fronds falling across part of the
-white surface. Summer, poolside, but still muted and natural in color.
+white surface, with a warm amber-orange flip cap. The label on it is
+completely blank — see LABEL RULE. A small ribbon of white cream has been
+squeezed out onto the surface near the cap. Shot from three-quarters above.
+Hard bright sunlight from the upper left casting a sharp defined shadow,
+with the dappled shadow of palm fronds falling across part of the white
+surface. Summer, poolside, but still muted and natural in color.
 ```
 
 ---
@@ -313,13 +326,13 @@ white surface. Summer, poolside, but still muted and natural in color.
   yağlı his bırakmaz. Paraben ve alkol içermez.
 
 ```text
-A tall, slim cylindrical bottle in dark forest-green glass with a matte black
-pump dispenser on top. Completely blank bottle — no label, no text. Shot
-straight on at eye level, centered, on a slate-grey seamless background. Cool
-directional light from the left produces a controlled highlight down the left
-edge of the glass and a soft shadow to the right. A few scattered water
-droplets on the surface and two fresh green tea tree leaves lying flat at the
-base. Masculine, cool, restrained.
+A tall, slim cylindrical bottle in dark forest-green glass with a matte
+black pump dispenser on top. The label on it is completely blank — see LABEL
+RULE. Shot straight on at eye level, centered, on a slate-grey seamless
+background. Cool directional light from the left produces a controlled
+highlight down the left edge of the glass and a soft shadow to the right. A
+few scattered water droplets on the surface and two fresh green tea tree
+leaves lying flat at the base. Masculine, cool, restrained.
 ```
 
 ---
@@ -334,13 +347,13 @@ base. Masculine, cool, restrained.
   renklendirici içermez. Dermatolojik olarak test edilmiştir.
 
 ```text
-A wide, short jar in pale powder-blue frosted glass with a smooth glossy white
-screw lid. Completely blank jar and lid — no text, no marking. The jar sits
-directly on a soft folded white waffle-weave cotton towel, which fills the
-lower third of the frame and gives visible fabric texture. Shot at a gentle
-three-quarter angle. Very soft, almost shadowless diffused light, high-key
-and airy. Three small white chamomile flowers with yellow centers rest on the
-towel beside the jar. Tender, calm, nursery mood.
+A wide, short jar in pale powder-blue frosted glass with a smooth glossy
+white screw lid. The label on it is completely blank — see LABEL RULE. The
+jar sits directly on a soft folded white waffle-weave cotton towel, which
+fills the lower third of the frame and gives visible fabric texture. Shot at
+a gentle three-quarter angle. Very soft, almost shadowless diffused light,
+high-key and airy. Three small white chamomile flowers with yellow centers
+rest on the towel beside the jar. Tender, calm, nursery mood.
 ```
 
 ---
@@ -357,11 +370,12 @@ towel beside the jar. Tender, calm, nursery mood.
 
 ```text
 A large cylindrical pump bottle in matte blush-ivory, generous body-lotion
-size, with a smooth white pump dispenser. Completely blank bottle — no label,
-no text. Shot straight on at eye level, centered, on a warm white seamless
-background. Soft, even, gentle light with a low contrast shadow beneath. Two
-shea nuts, three whole almonds and one small sprig of soft green leaves
-resting flat on the surface to the right of the bottle. Calm and reassuring.
+size, with a smooth white pump dispenser. The label on it is completely
+blank — see LABEL RULE. Shot straight on at eye level, centered, on a warm
+white seamless background. Soft, even, gentle light with a low contrast
+shadow beneath. Two shea nuts, three whole almonds and one small sprig of
+soft green leaves resting flat on the surface to the right of the bottle.
+Calm and reassuring.
 ```
 
 ---
@@ -377,12 +391,12 @@ resting flat on the surface to the right of the bottle. Calm and reassuring.
 
 ```text
 A tall, wide-mouthed amber glass tub with a flat glossy black screw lid,
-larger than a face-cream jar — hair-mask sized. Completely blank — no label,
-no text. Standing on a dark walnut wood surface, shot at a three-quarter
-angle. Warm light from the upper right, rich amber glow through the glass,
-warm shadow pooling to the left. Two argan nuts, one cracked open showing the
-pale kernel, and a small sprig of olive leaves with three green olives on the
-wood beside it.
+larger than a face-cream jar — hair-mask sized. The label on it is
+completely blank — see LABEL RULE. Standing on a dark walnut wood surface,
+shot at a three-quarter angle. Warm light from the upper right, rich amber
+glow through the glass, warm shadow pooling to the left. Two argan nuts, one
+cracked open showing the pale kernel, and a small sprig of olive leaves with
+three green olives on the wood beside it.
 ```
 
 ---
@@ -398,11 +412,11 @@ wood beside it.
 ```text
 A slim, elegant conical nail-care bottle with a glossy black tapered cap and
 a transparent glass body filled with clear golden oil, the internal brush
-applicator visible through the glass. Completely blank bottle — no label, no
-printing. Standing upright on a white marble tile with fine grey veining.
-Shot as a close macro at eye level so the bottle fills the vertical frame.
-Bright clean light, crisp small shadow. Two sprigs of fresh lavender with
-purple buds lying diagonally beside the base.
+applicator visible through the glass. The label on it is completely blank —
+see LABEL RULE. Standing upright on a white marble tile with fine grey
+veining. Shot as a close macro at eye level so the bottle fills the vertical
+frame. Bright clean light, crisp small shadow. Two sprigs of fresh lavender
+with purple buds lying diagonally beside the base.
 ```
 
 ---
@@ -418,12 +432,12 @@ purple buds lying diagonally beside the base.
 
 ```text
 Two rustic handmade soap bars in a pale cream-beige color with a slightly
-rough, hand-cut natural texture — one lying flat, one leaning upright against
-it — on a round dark walnut cutting board. The soap surfaces are completely
-smooth and blank: no stamp, no engraving, no letters, no logo. Shot at a
-three-quarter angle. Warm natural window light from the left. Two whole garlic
-bulbs and three loose garlic cloves beside them, plus a small sprig of
-rosemary. Rustic, handmade, warm.
+rough, hand-cut natural texture — one lying flat, one leaning upright
+against it — on a round dark walnut cutting board. The soap surfaces are
+completely smooth and blank: no stamp, no engraving, no letters, no logo.
+Shot at a three-quarter angle. Warm natural window light from the left. Two
+whole garlic bulbs and three loose garlic cloves beside them, plus a small
+sprig of rosemary. Rustic, handmade, warm.
 ```
 
 ---
@@ -449,14 +463,14 @@ rosemary. Rustic, handmade, warm.
 
 ```text
 Five different blank containers arranged as a family group on a white marble
-surface, varied in height so the silhouette steps up and down: one tall white
-pump bottle, one medium white bottle with a flip cap, one wide short white
-ceramic jar with a wood lid, one small amber glass jar with a black lid, and
-one slim amber glass dropper bottle. Every container is completely blank — no
-labels, no text, no logos anywhere. Shot straight on at eye level so all five
-are clearly readable as distinct shapes. A soft folded cream muslin cloth
-behind them, out of focus. Two small white daisies on the surface in front.
-Gentle warm light, soft shadows.
+surface, varied in height so the silhouette steps up and down: one tall
+white pump bottle, one medium white bottle with a flip cap, one wide short
+white ceramic jar with a wood lid, one small amber glass jar with a black
+lid, and one slim amber glass dropper bottle. Every container carries a
+clean unprinted label with nothing written on it. Shot straight on at eye
+level so all five are clearly readable as distinct shapes. A soft folded
+cream muslin cloth behind them, out of focus. Two small white daisies on the
+surface in front. Gentle warm light, soft shadows.
 ```
 
 ---
