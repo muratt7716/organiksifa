@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { DEMO_MODU } from "@/lib/demo";
+import { oturumCereziVarMi } from "./oturum-cerezi";
 
 /**
  * Proxy, doğruladığı kullanıcıyı bu başlıklarla aşağı geçirir; panel
@@ -75,9 +76,7 @@ export async function oturumYenile(request: NextRequest) {
    * yerleşiminde de yapılıyor (fail-closed) — orada gerçekten oturum yoksa
    * tek bir yönlendirme olur, zincir oluşmaz.
    */
-  const oturumCereziVar = request.cookies
-    .getAll()
-    .some((c) => /^sb-.*-auth-token/.test(c.name));
+  const oturumCereziVar = oturumCereziVarMi(request.cookies.getAll());
 
   let user = null;
   try {

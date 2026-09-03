@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { headers } from "next/headers";
+import { headers, cookies } from "next/headers";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { supabaseSunucu } from "@/lib/supabase/server";
@@ -9,6 +9,7 @@ import {
   BASLIK_KULLANICI_ID,
   BASLIK_EPOSTA,
 } from "@/lib/supabase/middleware";
+import { oturumCereziVarMi } from "@/lib/supabase/oturum-cerezi";
 import { db } from "@/db";
 import { adminProfiles } from "@/db/schema";
 import { DEMO_MODU, DEMO_ADMIN } from "@/lib/demo";
@@ -87,10 +88,27 @@ export async function mevcutAdmin(): Promise<Admin | null> {
       return null;
     }
 
-    const supabase = await supabaseSunucu();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    let user = (await (await supabaseSunucu()).auth.getUser()).data.user;
+
+    /**
+     * getUser() "oturum yok" dedi ama tarayıcıda oturum çerezi DURUYOR.
+     *
+     * Supabase erişim jetonunu yenilerken yenileme jetonu tek kullanımlıktır
+     * ve döner. Aynı anda giden isteklerden biri yarışı kaybedince getUser()
+     * geçici olarak null döner. Bunu "çıkış yaptı" saymak, ablamın kargo
+     * bilgisini kaydederken paneiden atılmasına yol açıyordu (ölçüldü:
+     * kargoGuncelle -> yetkiGerekli -> "Oturumun kapanmış").
+     *
+     * proxy bu durumu zaten hoş görüyor (bkz. supabase/middleware.ts) ama
+     * arkasındaki Server Action görmezden geliyordu. Tek bir yeniden deneme
+     * yeterli: dönen jeton çerezde hazır olduğu için ikinci çağrı geçer.
+     *
+     * GÜVENLİK: çereze güvenmiyoruz — yeniden deneme de Supabase'e karşı
+     * gerçek bir doğrulama. Doğrulanamazsa yine null dönüyoruz.
+     */
+    if (!user && oturumCereziVarMi((await cookies()).getAll())) {
+      user = (await (await supabaseSunucu()).auth.getUser()).data.user;
+    }
 
     // Gerçekten oturum yok — tek ve doğru yönlendirme burada olur.
     if (!user) return null;
