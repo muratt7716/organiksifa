@@ -1,178 +1,164 @@
 # Yapılacaklar
 
-Bu dosya **depoda durur** — bu bilgisayara erişim kalmasa da yapılacaklar kaybolmaz.
+Bu dosya **depoda durur** — bu bilgisayara erişim kalmasa da yapılacaklar
+kaybolmaz.
 
-Yayın öncesi tek tek işaretlenecek kontrol listesi ayrı dosyada:
-[`YAYIN-ONCESI-KONTROL.md`](YAYIN-ONCESI-KONTROL.md). Burası ise **henüz
-yazılmamış işler** içindir.
+Yayın öncesi tik listesi ayrı dosyada:
+[`YAYIN-ONCESI-KONTROL.md`](YAYIN-ONCESI-KONTROL.md). Burası **henüz
+yapılmamış işler** içindir.
 
-Son güncelleme: 3 Eylül 2026
-
----
-
-## 1. Sipariş takibi — müşteri sayfaya nasıl geri dönecek
-
-**Öncelik: yüksek** · Tahmini iş: küçük
-
-### Zaten çalışan kısım
-
-Müşteri sipariş sayfası hazır ve test edildi:
-`src/app/(magaza)/siparis/[no]/page.tsx`
-
-Müşteriye gösterdikleri:
-
-- Sipariş numarası ve tarihi
-- **Sipariş durumu** (Yeni · Görüşüldü · Onaylandı · Kargoda · Teslim edildi · İptal)
-- **Kargo firması ve takip numarası** — panele girildiği anda burada görünür
-- Ürünler, ara toplam, kargo, toplam
-- Teslimat bilgileri
-
-Adres `?t=<uuid>` jetonuyla korunur (`orders.erisim_token`). Sipariş numarasını
-tahmin eden biri başkasının siparişini açamaz.
-
-*3 Eylül 2026'da uçtan uca doğrulandı: panele `Yurtiçi / TEST1234567890`
-girildi, müşteri sayfasında anında göründü.*
-
-### Eksik olan
-
-Müşterinin bu sayfaya **sonradan dönmesinin bir yolu yok.** Sayfa "bu sayfayı
-kaydedebilirsin" diyor ama bu yer imine güveniyor — sekmeyi kapatan bir daha
-bulamıyor. WhatsApp mesajında da link yok.
-
-### Yapılacak
-
-1. **Takip linkini WhatsApp mesajına ekle** *(en ucuz ve en doğru çözüm)*
-
-   Müşteri zaten o mesajı gönderiyor; link sohbet geçmişinde kalıcı olarak
-   duruyor ve arayacağı ilk yer orası. Değiştirilecek yer: sipariş sonrası
-   WhatsApp metnini üreten fonksiyon (`src/lib/whatsapp.ts` içindeki şablon).
-   `YeniSiparisOlayi.siparisUrl` alanı zaten var, aynı adres kullanılabilir.
-
-2. **"Siparişimi sorgula" sayfası** *(linki tamamen kaybedenler için)*
-
-   Sipariş no + telefon → siparişi gösterir. İkisi birden doğru olmadan
-   açılmamalı; yoksa sipariş numarası sırayla artan bir sayı olduğu için
-   herkes herkesin siparişini görür.
-
-3. **Durum değişince müşteriye haber** *(isteğe bağlı)*
-
-   Panelden "Kargoya verildi" işaretlenince müşteriye WhatsApp mesajı taslağı
-   açan bir düğme. Panelde zaten "Müşteriye WhatsApp'tan yaz" düğmesi var;
-   duruma göre hazır metin üretmesi yeterli.
+Son güncelleme: 4 Eylül 2026
 
 ---
 
-## 2. Telegram bildirimi — alıcıyı panelden değiştirme
+## Şu anki durum
 
-**Öncelik: PayTR ile birlikte** · Tahmini iş: orta
+| | |
+|---|---|
+| Site | https://organiksifa.vercel.app |
+| Panel | https://organiksifa.vercel.app/panel |
+| Yayında ürün | **100** |
+| Kategori | 10 |
+| Görsel | 126 |
+| Mükerrer / görselsiz / kategorisiz | 0 |
 
-### Neden şimdi değil
+Katalog denetimi: `npm run denetle`
+Görsel dışı alanlar eksiksiz mi: `npm run hazirlik`
+Ürünleri yeniden yükle: `npm run urun:yukle`
+
+---
+
+## 1. Yayın için zorunlu — bunlar olmadan açılmaz
+
+- [ ] **100 ürünün fiyatları uydurma.** Gerçek fiyat girilmeden site kimseye
+      açılmamalı. Yanlış fiyatla sipariş gelirse o fiyat siparişin içine
+      kaydediliyor ve sonradan düzeltmek o siparişi düzeltmiyor.
+      Panel → Ürünler → ürüne tıkla → Fiyat.
+
+- [ ] **Firma bilgileri boş.** Ticaret unvanı, adres, MERSİS, vergi
+      dairesi/no, ETBİS. Türkiye'de e-ticaret için yasal zorunluluk; mesafeli
+      satış sözleşmesi ve KVKK sayfaları şu an boşluklarla çıkıyor.
+      Panel → Ayarlar → Firma bilgileri.
+
+- [ ] **İletişim bilgileri boş.** Telefon, e-posta, Instagram — footer'da
+      görünüyor.
+
+- [ ] **WhatsApp numarası girildi ✓** — ama kendi telefonundan bir deneme
+      siparişi verip mesajın geldiğini doğrula.
+
+---
+
+## 2. Eksik ürünler — 9 ürün siteye konmadı
+
+Ayrıntı ve sebepleri: [`docs/EKSIK-URUNLER.md`](docs/EKSIK-URUNLER.md)
+
+- [ ] **8 ürünün görseli bekliyor.** Ellerindeki tek görsel telefon ekran
+      görüntüsü, emoji çıkartmalı ya da içinde WhatsApp sohbeti olan kareler.
+      Promptları hazır: [`docs/ANTIGRAVITY-SON-18-GORSEL.md`](docs/ANTIGRAVITY-SON-18-GORSEL.md)
+      B bölümü, `31`–`38`.
+      Görseller gelince `beklet: true` satırını sil, `npm run urun:yukle`.
+
+- [ ] **6 ürünün ambalajı düzeltilecek.** Sitedeler ama kapakları infografik;
+      daha önce ürettiğim showroom görselleri yanlış ambalaj gösteriyordu.
+      Promptları aynı dosyada A bölümü, `10`–`15`.
+
+- [ ] **Sara-Epilepsi Seti listelenmedi.** Epilepside ilacın kesilmesi
+      ölümcül olabiliyor. Ablanla konuşulmadan konmayacak.
+
+---
+
+## 3. Ablama sorulacak
+
+- [ ] **Ayak Bakım Seti** (6 parça) ↔ **Ayak Bakım Seti — 8 Parça**
+      Ayrı ürün mü, biri diğerinin yerini mi alıyor?
+- [ ] **Bağırsak Temizlik Destek Seti** (parazit) ↔ **Bağırsak Temizleme
+      Destek Seti** — içerikleri farklı ama adları çok yakın.
+- [ ] **Ana sayfa vitrini.** Şu an 4 ürün "öne çıkan". Hangi ürünlerin
+      vitrinde olacağına ablan karar vermeli. Panel → Ürünler → Öne çıkar.
+
+---
+
+## 4. Telegram bildirimi — PayTR ile birlikte
 
 Şu an sipariş WhatsApp'tan geliyor; müşteri mesajı gönderince telefon zaten
-çalıyor. Telegram bunun üstüne ikinci bildirim ekliyor.
+çalıyor. **PayTR'de durum değişiyor:** ödeme sağlayıcıdan dönen siparişte
+tetiklenen bir WhatsApp sohbeti olmayacak, bildirim kanalı asıl o zaman
+zorunlu hâle geliyor.
 
-**PayTR'de durum değişiyor:** ödeme sağlayıcıdan dönen siparişte tetiklenen bir
-WhatsApp sohbeti olmayacak. Bildirim kanalı asıl o zaman zorunlu hâle geliyor.
+Bugün de tek açık var: müşteri formu doldurup WhatsApp'ta GÖNDER'e basmazsa
+sipariş veritabanına düşer ama kimse duymaz. Panel günlük açıldığı sürece
+sorun değil.
 
-Ayrıca bugün de tek bir açık var: müşteri formu doldurup WhatsApp'ta GÖNDER'e
-basmazsa sipariş veritabanına düşer ama kimse duymaz. Panel günlük açıldığı
-sürece sorun değil.
+**Hazır olan:** `src/lib/notify/index.ts` — gönderme, mesaj biçimi, kanal
+anahtarı, Ayarlar'daki "Test bildirimi gönder" düğmesi çalışıyor. Bildirim
+çökse bile sipariş kaydı korunuyor.
 
-### Zaten çalışan kısım
+**Eksik olan:** alıcı `TELEGRAM_CHAT_ID` ortam değişkeninden okunuyor;
+panelden değiştirilemiyor.
 
-`src/lib/notify/index.ts` — gönderme, mesaj biçimi, kanal açma/kapama anahtarı
-ve Ayarlar'daki "Test bildirimi gönder" düğmesi hazır. Bildirim çökse bile
-sipariş kaydı korunuyor (`Promise.allSettled`, asla fırlatmaz).
+**Karar verilmiş tasarım:** tek kişi (ablam) + panelde "Bağlan" düğmesi.
+`settings` tablosuna `telegram_chat_id` ve `telegram_baglama_kodu` sütunları
+eklenecek *(SQL değişikliği)*. Bot jetonu ortam değişkeninde kalır — sırdır,
+panel formunda render edilirse HTML kaynağında görünür. Akış: panel bir kod
+gösterir → ablam kodu bota yazar → "Bağlandı mı?" düğmesi `getUpdates` ile
+kodu arar ve `chat_id`'yi kendi yakalar. Webhook gerekmez.
 
-### Eksik olan
-
-Alıcı `TELEGRAM_CHAT_ID` **ortam değişkeninden** okunuyor
-([`notify/index.ts`](src/lib/notify/index.ts) `TelegramKanali.aktifMi`).
-Alıcıyı değiştirmek için Vercel'e girip değişkeni düzenleyip yeniden deploy
-almak gerekiyor — panelden tek işlemle değiştirilemiyor.
-
-### Yapılacak — karar verilmiş tasarım
-
-Alıcı: **tek kişi (ablam)**. Bağlama yöntemi: **panelde "Bağlan" düğmesi.**
-
-1. `settings` tablosuna `telegram_chat_id` ve `telegram_baglama_kodu` sütunları
-   *(SQL değişikliği gerekir — Supabase'de elle çalıştırılacak)*
-2. Bot jetonu **ortam değişkeninde kalır** — sırdır, panel formunda
-   render edilirse HTML kaynağında görünür. Bot bir kez kurulur, değişmez.
-3. Panelde akış: "Bağlan" → ekranda kod çıkar (örn. `BAGLA-4821`) → ablam o kodu
-   bota yazar → "Bağlandı mı?" düğmesi Telegram `getUpdates` ile o kodu arar,
-   bulunca `chat_id`'yi kendi yakalar ve kaydeder. Kimse numara/ID aramaz.
-4. Webhook gerekmez — `getUpdates` düğmeye basınca çağrılır.
-
-Bot henüz oluşturulmadı (`.env.local` içinde `TELEGRAM_BOT_TOKEN` boş).
-Telegram'da `@BotFather` → `/newbot` ile oluşturulup jeton alınacak.
+Bot henüz oluşturulmadı (`TELEGRAM_BOT_TOKEN` boş). `@BotFather` → `/newbot`.
 
 ---
 
-## 3. PayTR sanal POS
+## 5. Sipariş takibi — müşteri sayfaya nasıl dönecek
 
-**Öncelik: WhatsApp akışı oturduktan sonra** · Tahmini iş: büyük
+**Zaten çalışan kısım:** `src/app/(magaza)/siparis/[no]/page.tsx` müşteriye
+sipariş durumunu, kargo firmasını ve takip numarasını gösteriyor. Adres
+`?t=<uuid>` jetonuyla korunuyor. 3 Eylül'de uçtan uca doğrulandı.
+
+**Eksik olan:** müşterinin sayfaya sonradan dönme yolu yok. Sayfa "bu sayfayı
+kaydedebilirsin" diyor ama yer imine güveniyor; WhatsApp mesajında link yok.
+
+- [ ] **Takip linkini WhatsApp mesajına ekle** — en ucuz çözüm. Müşteri o
+      mesajı zaten gönderiyor, link sohbet geçmişinde kalıcı duruyor.
+      `src/lib/whatsapp.ts` içindeki şablon. `YeniSiparisOlayi.siparisUrl`
+      alanı zaten var.
+- [ ] **"Siparişimi sorgula" sayfası** — sipariş no + telefon. İkisi birden
+      doğru olmadan açılmamalı; sipariş numarası sırayla arttığı için.
+
+---
+
+## 6. PayTR sanal POS
 
 Hazırlık notları: [`docs/PAYTR-ENTEGRASYON.md`](docs/PAYTR-ENTEGRASYON.md)
 
-Sıra: önce WhatsApp'la gerçek sipariş alınsın, akış otursun; sonra ödeme
-sitede toplansın. Firma bilgileri ve ETBİS kaydı PayTR başvurusu için zaten
-gerekiyor — o yüzden yasal alanların doldurulması bunun ön koşulu.
+Önce WhatsApp'la gerçek sipariş alınsın, akış otursun. Firma bilgileri ve
+ETBİS kaydı PayTR başvurusu için zaten gerekiyor.
 
 ---
 
-## 4. Küçük işler
+## 7. Teknik — açık kalanlar
 
-- [ ] **Kategori sayfalarında çift sorgu.** `yayindakiUrunler()` hem
-      `generateMetadata` hem sayfa gövdesinde çağrılıyor; aynı veri iki kez
-      çekiliyor (~1.3 sn fazladan). React `cache()` ile sarmalamak yeterli.
-- [ ] **5. ürün: Kan Yapıcı Set.** Görseller üretilmedi (Antigravity kotaya
-      takıldı). Görseller gelince:
-      `python scripts/urun-gorsel-hazirla.py urun-kan-yapici-set` ardından
-      `npm run urun:yukle urun-kan-yapici-set`
-- [ ] **İkinci "Altın Yağ" ne olacak?** Üründe iki kayıt var: 1.250 ₺ (yayında)
-      ve 450 ₺ (yayında değil, stokta yok). İkincisi gerçek ürün mü, silinecek
-      mi belli değil.
-- [ ] **Panel sayfa render'ı ~1.7 sn — teşhis tamam, düzeltme yapılmadı.**
-
-      Kontrol deneyiyle ölçüldü (canlı, oturum açık):
+- [ ] **Panel sayfa render'ı ~1.7 sn.** Teşhis tamam, düzeltme yapılmadı.
+      Kontrol deneyiyle ölçüldü:
 
       | ne | süre |
       |---|---|
       | `/api/saglik` — proxy yok, dinamik, sorgu var | 496 ms |
       | `/panel/tani` — proxy VAR, dinamik, sorgu var | **116 ms** |
-      | `/panel/ayarlar` — proxy VAR, dinamik, sayfa render | 1828 ms |
+      | `/panel/ayarlar` — proxy VAR, sayfa render | 1828 ms |
 
-      Yani **proxy suçlu değil** (proxy'den geçen uç nokta 116 ms). Ölçülen
-      parçalar: proxy auth 58-90 ms, yerleşim veri çekme 100-167 ms, sayfa
-      sorgusu ~94 ms. Geriye ~1.5 sn **React sunucu render'ı** kalıyor ve
-      sayfa içeriğinden bağımsız olarak hep aynı — demek ki tek tek sayfalar
-      değil, ortak `(korumali)` yerleşimi.
+      **Proxy suçlu değil.** Ölçülen parçalar: proxy auth 58-90 ms, yerleşim
+      veri çekme 100-167 ms, sayfa sorgusu ~94 ms. Geriye ~1.5 sn React
+      sunucu render'ı kalıyor ve sayfa içeriğinden bağımsız olarak hep aynı —
+      demek ki tek tek sayfalar değil, ortak `(korumali)` yerleşimi.
 
       Sıradaki adım: yerleşimi parçalara ayırıp hangi bileşenin pahalı
-      olduğunu bulmak (PanelNav, header, ya da `force-dynamic` ile
-      streaming'in kapalı olması). Ölçüm kancaları yerinde:
-      proxy `Server-Timing: proxyauth`, yerleşim `data-os-olcum`.
+      olduğunu bulmak. Proxy'de `Server-Timing: proxyauth` kancası duruyor.
 
 - [ ] **Betikle eklenen ürün mağazada geç görünüyor.** Ürün ve kategori
       sayfaları statik üretildiği için, panelden DEĞİL betikle eklenen ürün
       önbellek yenilenene kadar (1 saat) listede çıkmıyor. Panelden eklemede
-      `revalidatePath` tetiklendiği için bu sorun yok. Betiğe on-demand
-      revalidation çağrısı eklenebilir; şimdilik push/deploy yeniden üretiyor.
+      `revalidatePath` tetiklendiği için bu sorun yok. Push/deploy yeniden
+      üretiyor.
 
----
-
-## Engelli — bunlar çözülmeden ilerlenmiyor
-
-- [ ] **Vercel dağıtımı düşük.** `organiksatis.vercel.app` hiçbir dağıtıma bağlı
-      değil (`X-Vercel-Error: DEPLOYMENT_NOT_FOUND`). Proje silinmiş, adı
-      değişmiş veya Hobby kısıtına takılmış olabilir. Vercel panosundan
-      bakılacak. Depoda `.vercel/` klasörü veya `vercel.json` yok — proje
-      panodan GitHub'a bağlanmış.
-- [ ] **WhatsApp sipariş numarası boş.** Bu alan boşken sitedeki **tüm sipariş
-      düğmeleri sessizce ölü** — müşteri hata bile görmez. Panel → Ayarlar →
-      WhatsApp.
-- [ ] **Firma bilgileri boş.** Ticaret unvanı, adres, MERSİS, vergi dairesi/no,
-      ETBİS. Yasal zorunluluk; mesafeli satış sözleşmesi ve KVKK sayfaları şu an
-      boşluklarla çıkıyor.
-- [ ] **İletişim bilgileri boş.** Telefon, e-posta, Instagram — footer'da görünür.
+- [ ] **Kategori sayfalarında çift sorgu** — `yayindakiUrunler()` hem
+      `generateMetadata` hem sayfa gövdesinde çağrılıyordu; `cache()` ile
+      çözüldü ama benzer desen başka yerde kalmış olabilir.
