@@ -133,9 +133,32 @@ gerekiyor — o yüzden yasal alanların doldurulması bunun ön koşulu.
 - [ ] **İkinci "Altın Yağ" ne olacak?** Üründe iki kayıt var: 1.250 ₺ (yayında)
       ve 450 ₺ (yayında değil, stokta yok). İkincisi gerçek ürün mü, silinecek
       mi belli değil.
-- [ ] **Hız düzeltmesi canlıda ölçülmedi.** İlk sorgu zaman aşımı ölçülen
-      değerlere göre 2500 → 900 ms indirildi (sağlıklı sorgu 94 ms, taze
-      bağlantı 604 ms). Site ayağa kalkınca panel sekmeleri yeniden ölçülecek.
+- [ ] **Panel sayfa render'ı ~1.7 sn — teşhis tamam, düzeltme yapılmadı.**
+
+      Kontrol deneyiyle ölçüldü (canlı, oturum açık):
+
+      | ne | süre |
+      |---|---|
+      | `/api/saglik` — proxy yok, dinamik, sorgu var | 496 ms |
+      | `/panel/tani` — proxy VAR, dinamik, sorgu var | **116 ms** |
+      | `/panel/ayarlar` — proxy VAR, dinamik, sayfa render | 1828 ms |
+
+      Yani **proxy suçlu değil** (proxy'den geçen uç nokta 116 ms). Ölçülen
+      parçalar: proxy auth 58-90 ms, yerleşim veri çekme 100-167 ms, sayfa
+      sorgusu ~94 ms. Geriye ~1.5 sn **React sunucu render'ı** kalıyor ve
+      sayfa içeriğinden bağımsız olarak hep aynı — demek ki tek tek sayfalar
+      değil, ortak `(korumali)` yerleşimi.
+
+      Sıradaki adım: yerleşimi parçalara ayırıp hangi bileşenin pahalı
+      olduğunu bulmak (PanelNav, header, ya da `force-dynamic` ile
+      streaming'in kapalı olması). Ölçüm kancaları yerinde:
+      proxy `Server-Timing: proxyauth`, yerleşim `data-os-olcum`.
+
+- [ ] **Betikle eklenen ürün mağazada geç görünüyor.** Ürün ve kategori
+      sayfaları statik üretildiği için, panelden DEĞİL betikle eklenen ürün
+      önbellek yenilenene kadar (1 saat) listede çıkmıyor. Panelden eklemede
+      `revalidatePath` tetiklendiği için bu sorun yok. Betiğe on-demand
+      revalidation çağrısı eklenebilir; şimdilik push/deploy yeniden üretiyor.
 
 ---
 

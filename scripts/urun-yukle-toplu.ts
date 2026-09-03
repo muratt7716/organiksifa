@@ -1,15 +1,20 @@
 /**
- * `urun-gorselleri/` klasöründeki showroom görselleriyle ürünleri toplu ekler.
- *   npx tsx scripts/urun-yukle-toplu.ts
+ * Katalogdaki tüm ürünleri Supabase'e yükler.
+ *   npx tsx scripts/urun-yukle-toplu.ts            (yükler)
+ *   npx tsx scripts/urun-yukle-toplu.ts --kuru     (hiçbir şey yazmaz, rapor verir)
  *
- * Her ürün İKİ görselle girer:
- *   1. kapak   — urun-gorselleri/NN-slug.jpg  (AI showroom, katalog kartında)
- *   2. detay   — urunler-ham/<infografik>     (ablamın gönderdiği bilgi görseli)
+ * NEREYE YAZAR: .env.local içindeki DATABASE_URL — yani Vercel'in kullandığı
+ * Supabase'in ta kendisi. "Yerel veritabanı" diye ayrı bir şey yok; buradan
+ * yüklenen ürün canlı sitede anında görünür.
  *
- * Görsel bulunamayan ürün sessizce atlanır — kota bitince kalanlar
- * eklendiğinde betik yeniden çalıştırılabilir, mevcut ürünler güncellenir.
+ * Ürün tanımları scripts/urunler-verisi.ts içinde.
  *
- * Fiyatlar geçicidir; panelden düzeltilecek.
+ * GÖRSELLER
+ *   kapak  — urun-gorselleri/<showroom>   (varsa; kare, hero'ya uygun)
+ *   detay  — urunler-ham/<infografik>     (ablamın gönderdiği bilgi görseli)
+ * Showroom yoksa infografik kapak olur.
+ *
+ * Aynı slug ile tekrar çalıştırılırsa ürün güncellenir, kopya oluşmaz.
  */
 import dotenv from "dotenv";
 dotenv.config({ path: [".env.local", ".env"], quiet: true });
@@ -19,156 +24,23 @@ import path from "node:path";
 import sharp from "sharp";
 import postgres from "postgres";
 import { createClient } from "@supabase/supabase-js";
+import { URUNLER } from "./urunler-verisi";
 
 const KOK = path.join(import.meta.dirname, "..");
 const KOVA = "urunler";
+const KURU = process.argv.includes("--kuru");
 
-type Urun = {
-  no: string;
-  slug: string;
-  baslik: string;
-  kategoriSlug: string;
-  fiyat: string;
-  kisa: string;
-  aciklama: string;
-  setIcerigi?: string[];
-  /** urunler-ham/ içindeki infografik dosyası (ikinci görsel). */
-  infografik?: string;
-};
-
-const H = "WhatsApp Image 2026-09-03 at";
-
-const URUNLER: Urun[] = [
-  {
-    no: "01",
-    slug: "ayvalik-zeytinyagi-soguk-sikim-5l",
-    baslik: "Ayvalık Zeytinyağı — Soğuk Sıkım 5 L",
-    kategoriSlug: "bitkisel-yaglar",
-    fiyat: "2450.00",
-    kisa: "Balıkesir Ayvalık, erken hasat, soğuk sıkım. Asit oranı %0,3.",
-    aciklama: `Balıkesir Ayvalık bölgesinden erken hasat zeytinlerin soğuk sıkım yöntemiyle elde edildiği sızma zeytinyağı. Asit oranı %0,3.
-
-Soğuk sıkımda zeytin ısıya maruz kalmadığı için doğal aroması ve polifenol içeriği korunur.
-
-Kullanım: Salata, kahvaltı, zeytinyağlı yemekler, makarna ve soslar, sebze ve fırın yemekleri, et-tavuk-balık marinasyonu.
-
-Kışın doğal olarak yoğunlaşıp bulanıklaşabilir veya donabilir. Bu saflığın göstergesidir; oda sıcaklığında kısa sürede eski hâline döner.
-
-Hacim: 5 litre. Serin ve ışık almayan yerde saklayın.`,
-    infografik: `${H} 02.05.25 (1).jpeg`,
-  },
-  {
-    no: "02",
-    slug: "uzum-pekmezi",
-    baslik: "Üzüm Pekmezi",
-    kategoriSlug: "takviye-urunler",
-    fiyat: "320.00",
-    kisa: "Geleneksel yöntemle kaynatılmış, katkısız üzüm pekmezi.",
-    aciklama: `Siyah üzümün geleneksel yöntemle kaynatılarak koyulaştırılmasıyla elde edilir. Şeker, koruyucu veya katkı maddesi içermez.
-
-Doğal karbonhidrat ve mineral kaynağıdır.
-
-Kullanım: Kahvaltıda tahin ile karıştırarak, sütle, veya tatlılarda kullanılabilir.
-
-Cam kavanoz. Serin ve kuru yerde saklayın, açtıktan sonra buzdolabında tutun.`,
-    infografik: `${H} 02.05.27.jpeg`,
-  },
-  {
-    no: "03",
-    slug: "propolis-damla-50ml",
-    baslik: "Propolis Damla 50 ml — Alkolsüz",
-    kategoriSlug: "takviye-urunler",
-    fiyat: "480.00",
-    kisa: "Alkol içermeyen propolis özütü, damlalıklı amber şişe.",
-    aciklama: `Arıların kovan girişini korumak için ürettiği reçinemsi maddeden elde edilen özüt.
-
-Alkol içermeyen formülü sayesinde her gün kullanıma uygundur.
-
-Damlalıklı 50 ml amber cam şişe. Amber cam içeriği ışıktan korur.
-
-Serin ve ışık almayan yerde saklayın. Takviye edici gıdadır, ilaç değildir.`,
-    infografik: `${H} 02.05.27 (1).jpeg`,
-  },
-  {
-    no: "04",
-    slug: "kombu-cayi-kombucha-500ml",
-    baslik: "Kombu Çayı (Kombucha) 500 ml",
-    kategoriSlug: "cay-detoks",
-    fiyat: "180.00",
-    kisa: "Doğal fermente çay. Rafine şeker ve koruyucu içermez.",
-    aciklama: `Özenle fermente edilen kombu çayı; doğal probiyotikler, enzimler ve organik asitler içerir.
-
-Rafine şeker, koruyucu ve katkı maddesi içermez. Vegan.
-
-Kullanım: Günde 1 şişe, soğuk olarak tüketilmesi önerilir.
-
-Hacim: 500 ml. Açıldıktan sonra buzdolabında saklayın.`,
-    infografik: `${H} 02.08.46.jpeg`,
-  },
-  {
-    no: "05",
-    slug: "probiyotik-konsantre-icecek-500ml",
-    baslik: "Probiyotik Konsantre İçecek 500 ml",
-    kategoriSlug: "cay-detoks",
-    fiyat: "640.00",
-    kisa: "Canlı kültür içeren konsantre içecek.",
-    aciklama: `Canlı kültür içeren konsantre içecek. Günlük beslenmesine probiyotik desteği eklemek isteyenler için.
-
-Hacim: 500 ml.
-
-Kullanım: Kullanmadan önce çalkalayın. Açıldıktan sonra buzdolabında saklayın.
-
-Takviye edici gıdadır, ilaç değildir.`,
-    infografik: `${H} 02.08.47 (4).jpeg`,
-  },
-  {
-    no: "06",
-    slug: "guzellik-kremi",
-    baslik: "Güzellik Kremi",
-    kategoriSlug: "cilt-bakimi",
-    fiyat: "590.00",
-    kisa: "Argan, aloe vera ve E vitamini içeren günlük yüz kremi.",
-    aciklama: `İçindekiler: Argan yağı, aloe vera, hindistan cevizi yağı, kuşburnu yağı, papatya özü, E vitamini.
-
-Kullanım alanları: Yüz, boyun ve dekolte, eller, vücut.
-
-Kullanım: Temiz cilde sabah ve akşam nazikçe masaj yaparak uygulayın.
-
-Paraben, sülfat ve alkol içermez. Tüm cilt tipleri için uygundur. Dermatolojik olarak test edilmiştir.`,
-    infografik: `${H} 02.08.49 (1).jpeg`,
-  },
-  {
-    no: "07",
-    slug: "yogun-nemlendirici-el-yuz-kremi",
-    baslik: "Yoğun Nemlendirici El & Yüz Kremi",
-    kategoriSlug: "cilt-bakimi",
-    fiyat: "420.00",
-    kisa: "Aloe vera ve shea yağı ile yoğun nem, yağlı his bırakmaz.",
-    aciklama: `İçindekiler: Aloe vera, shea yağı, jojoba yağı, E vitamini, papatya özü, hindistan cevizi yağı.
-
-Kullanım alanları: Yüz, eller, dirsek, diz ve boyun gibi kuru bölgeler.
-
-Kullanım: Temiz cilde yeterli miktarda alıp nazikçe masaj yaparak uygulayın. Gün içinde ihtiyaç duydukça tekrarlayın.
-
-Hafif dokusu sayesinde hızla emilir, yağlı his bırakmaz. Paraben, sülfat ve renklendirici içermez.`,
-    infografik: `${H} 02.08.49 (4).jpeg`,
-  },
-  {
-    no: "08",
-    slug: "hindistan-cevizi-yagli-krem",
-    baslik: "Hindistan Cevizi Yağlı Krem",
-    kategoriSlug: "cilt-bakimi",
-    fiyat: "380.00",
-    kisa: "Hindistan cevizi yağı ile yoğun nem ve bakım.",
-    aciklama: `Hindistan cevizi yağı ile hazırlanmış nemlendirici krem.
-
-Kullanım alanları: Yüz, eller, vücut, bacaklar, ayaklar.
-
-Kullanım: Temiz cilde nazikçe masaj yaparak uygulayın. Günlük kullanıma uygundur.
-
-Paraben, silikon, renklendirici ve hayvansal içerik içermez. Tüm cilt tipleri için uygundur.`,
-    infografik: `${H} 02.08.49 (9).jpeg`,
-  },
+/** Panelde olmayan kategoriler açılır. */
+const KATEGORILER: { slug: string; ad: string; sira: number }[] = [
+  { slug: "setler", ad: "Setler", sira: 1 },
+  { slug: "takviye-urunler", ad: "Takviye Ürünler", sira: 2 },
+  { slug: "cilt-bakimi", ad: "Cilt Bakımı", sira: 3 },
+  { slug: "sac-bakimi", ad: "Saç Bakımı", sira: 4 },
+  { slug: "bitkisel-yaglar", ad: "Bitkisel Yağlar", sira: 5 },
+  { slug: "cay-detoks", ad: "Çay & Detoks", sira: 6 },
+  { slug: "sabun-temizlik", ad: "Sabun & Temizlik", sira: 7 },
+  { slug: "anne-bebek", ad: "Anne & Bebek", sira: 8 },
+  { slug: "agiz-dis", ad: "Ağız & Diş", sira: 9 },
 ];
 
 /** Görseli WebP'ye çevirir, ölçüsünü ve kenar zemin rengini döndürür. */
@@ -176,33 +48,35 @@ async function hazirla(dosyaYolu: string, enBoy: number) {
   const girdi = sharp(dosyaYolu).rotate();
   const ust = await girdi.metadata();
 
-  const olcekli = girdi.resize({
-    width: Math.min(ust.width ?? enBoy, enBoy),
-    height: Math.min(ust.height ?? enBoy, enBoy),
-    fit: "inside",
-    withoutEnlargement: true,
-  });
+  const veri = await girdi
+    .resize({
+      width: Math.min(ust.width ?? enBoy, enBoy),
+      height: Math.min(ust.height ?? enBoy, enBoy),
+      fit: "inside",
+      withoutEnlargement: true,
+    })
+    .webp({ quality: 82 })
+    .toBuffer();
 
-  const veri = await olcekli.webp({ quality: 82 }).toBuffer();
   const son = await sharp(veri).metadata();
 
-  // Zemin rengi: sol üst köşeden 1 piksel. Görselin etrafına konan dolgu
-  // bu renkle boyanıyor, böylece beyaz zeminli ürün fotoğrafı kesintisiz durur.
+  // Zemin rengi: sol üst köşe. Kart içinde görselin etrafına konan dolgu bu
+  // renkle boyanıyor, böylece dikey infografik kesintisiz duruyor.
   const kose = await sharp(veri)
     .extract({ left: 0, top: 0, width: 1, height: 1 })
     .raw()
     .toBuffer();
-  const zemin =
-    "#" +
-    [kose[0], kose[1], kose[2]]
-      .map((n) => n.toString(16).padStart(2, "0"))
-      .join("");
 
   return {
     veri,
     genislik: son.width ?? 0,
     yukseklik: son.height ?? 0,
-    zeminRengi: zemin.toUpperCase(),
+    zeminRengi:
+      "#" +
+      [kose[0], kose[1], kose[2]]
+        .map((n) => n.toString(16).padStart(2, "0"))
+        .join("")
+        .toUpperCase(),
   };
 }
 
@@ -215,41 +89,89 @@ async function main() {
     process.exit(1);
   }
 
+  console.log(`\nHedef: ${new URL(dbUrl).host}`);
+  console.log(`${URUNLER.length} ürün tanımı${KURU ? "  (KURU ÇALIŞTIRMA)" : ""}\n`);
+
+  /* ---- Ön kontrol: dosyalar yerinde mi, slug tekrarı var mı? ---- */
+  const hatalar: string[] = [];
+  const gorulenSlug = new Set<string>();
+  for (const u of URUNLER) {
+    if (gorulenSlug.has(u.slug)) hatalar.push(`slug tekrarı: ${u.slug}`);
+    gorulenSlug.add(u.slug);
+
+    const info = path.join(KOK, "urunler-ham", u.infografik);
+    if (!fs.existsSync(info)) hatalar.push(`infografik yok: ${u.slug} -> ${u.infografik}`);
+
+    if (u.showroom) {
+      const sh = path.join(KOK, "urun-gorselleri", u.showroom);
+      if (!fs.existsSync(sh)) hatalar.push(`showroom yok: ${u.slug} -> ${u.showroom}`);
+    }
+
+    const kat = KATEGORILER.find((k) => k.slug === u.kategoriSlug);
+    if (!kat) hatalar.push(`kategori tanımsız: ${u.slug} -> ${u.kategoriSlug}`);
+  }
+
+  if (hatalar.length) {
+    console.error("ÖN KONTROL BAŞARISIZ:\n  " + hatalar.join("\n  ") + "\n");
+    process.exit(1);
+  }
+  console.log("ön kontrol: tamam\n");
+
+  /* ---- Kullanılmayan ham dosyalar ---- */
+  const kullanilan = new Set(URUNLER.map((u) => u.infografik));
+  const tumHam = fs
+    .readdirSync(path.join(KOK, "urunler-ham"))
+    .filter((f) => f.endsWith(".jpeg"));
+  const bosta = tumHam.filter((f) => !kullanilan.has(f));
+
   const sql = postgres(dbUrl, { prepare: false, max: 1 });
   const depo = createClient(sbUrl, sbKey, { auth: { persistSession: false } });
 
+  /* ---- Kategoriler ---- */
+  if (!KURU) {
+    for (const k of KATEGORILER) {
+      await sql`
+        INSERT INTO categories (ad, slug, sira, aktif)
+        VALUES (${k.ad}, ${k.slug}, ${k.sira}, true)
+        ON CONFLICT (slug) DO UPDATE SET ad = EXCLUDED.ad, sira = EXCLUDED.sira`;
+    }
+    console.log(`${KATEGORILER.length} kategori hazır\n`);
+  }
+
+  /* ---- Ürünler ---- */
   let eklenen = 0;
-
   for (const u of URUNLER) {
-    const kapakYolu = path.join(KOK, "urun-gorselleri", `${u.no}-${u.slug}.jpg`);
-    const alternatif = fs
-      .readdirSync(path.join(KOK, "urun-gorselleri"))
-      .find((f) => f.startsWith(`${u.no}-`));
-    const kapak = fs.existsSync(kapakYolu)
-      ? kapakYolu
-      : alternatif
-        ? path.join(KOK, "urun-gorselleri", alternatif)
-        : null;
+    const satirlar: { kaynak: string; enBoy: number; tur: string; sira: number }[] = [];
 
-    if (!kapak) {
-      console.log(`[atlandı] ${u.no} ${u.baslik} — kapak görseli yok`);
-      continue;
+    if (u.showroom) {
+      satirlar.push({
+        kaynak: path.join(KOK, "urun-gorselleri", u.showroom),
+        enBoy: 1400,
+        tur: "kapak",
+        sira: 0,
+      });
+      satirlar.push({
+        kaynak: path.join(KOK, "urunler-ham", u.infografik),
+        enBoy: 1600,
+        tur: "detay",
+        sira: 1,
+      });
+    } else {
+      satirlar.push({
+        kaynak: path.join(KOK, "urunler-ham", u.infografik),
+        enBoy: 1600,
+        tur: "kapak",
+        sira: 0,
+      });
     }
 
-    console.log(`\n${u.no} · ${u.baslik}`);
-
-    type Yuklenecek = { kaynak: string; enBoy: number; tur: string; sira: number };
-    const liste: Yuklenecek[] = [
-      { kaynak: kapak, enBoy: 1400, tur: "kapak", sira: 0 },
-    ];
-
-    if (u.infografik) {
-      const infoYolu = path.join(KOK, "urunler-ham", u.infografik);
-      if (fs.existsSync(infoYolu)) {
-        liste.push({ kaynak: infoYolu, enBoy: 1600, tur: "detay", sira: 1 });
-      } else {
-        console.log(`  ! infografik bulunamadı: ${u.infografik}`);
-      }
+    if (KURU) {
+      console.log(
+        `${u.slug.padEnd(38)} ${u.kategoriSlug.padEnd(16)} ${satirlar.length} görsel` +
+          (u.showroom ? "  (showroom kapak)" : "  (infografik kapak)"),
+      );
+      eklenen++;
+      continue;
     }
 
     const yuklenen: {
@@ -262,7 +184,7 @@ async function main() {
       sira: number;
     }[] = [];
 
-    for (const g of liste) {
+    for (const g of satirlar) {
       const hazir = await hazirla(g.kaynak, g.enBoy);
       const yol = `urunler/${u.slug}/${g.sira === 0 ? "kapak" : "detay"}.webp`;
 
@@ -271,7 +193,7 @@ async function main() {
         .upload(yol, hazir.veri, { contentType: "image/webp", upsert: true });
 
       if (error) {
-        console.error(`  ! yüklenemedi: ${error.message}`);
+        console.error(`  ! ${u.slug} görsel yüklenemedi: ${error.message}`);
         continue;
       }
 
@@ -284,21 +206,15 @@ async function main() {
         tur: g.tur,
         sira: g.sira,
       });
-
-      const kb = Math.round(hazir.veri.length / 1024);
-      console.log(
-        `  ✓ ${g.tur} ${hazir.genislik}x${hazir.yukseklik} · ${kb} KB · ${hazir.zeminRengi}`,
-      );
     }
 
     if (yuklenen.length === 0) {
-      console.error("  ! hiç görsel yüklenemedi, ürün eklenmedi");
+      console.error(`  ! ${u.slug}: hiç görsel yüklenemedi, ürün eklenmedi`);
       continue;
     }
 
     const [kat] = await sql<{ id: string }[]>`
       SELECT id FROM categories WHERE slug = ${u.kategoriSlug}`;
-    if (!kat) console.log(`  ! kategori bulunamadı: ${u.kategoriSlug}`);
 
     const [urun] = await sql<{ id: string }[]>`
       INSERT INTO products (baslik, slug, kisa_aciklama, aciklama, fiyat,
@@ -313,6 +229,7 @@ async function main() {
         aciklama      = EXCLUDED.aciklama,
         fiyat         = EXCLUDED.fiyat,
         kategori_id   = EXCLUDED.kategori_id,
+        set_icerigi   = EXCLUDED.set_icerigi,
         yayinda       = true,
         updated_at    = now()
       RETURNING id`;
@@ -326,22 +243,32 @@ async function main() {
                 ${g.genislik}, ${g.yukseklik}, ${g.zeminRengi}, ${g.tur}, true, ${g.sira})`;
     }
 
-    const k = yuklenen[0];
-    const oran = k.genislik / k.yukseklik;
-    console.log(
-      `  → ${yuklenen.length} görsel · kapak oranı ${oran.toFixed(2)} ` +
-        `(${oran >= 0.75 && oran <= 1.35 ? "hero'ya uygun" : "hero'ya uygun DEĞİL"})`,
-    );
     eklenen++;
+    const k = yuklenen[0];
+    console.log(
+      `${String(eklenen).padStart(2)}/${URUNLER.length}  ${u.baslik.slice(0, 44).padEnd(44)} ` +
+        `${yuklenen.length} görsel  kapak ${k.genislik}x${k.yukseklik}`,
+    );
   }
 
-  const [{ n }] = await sql<{ n: number }[]>`
-    SELECT count(*)::int AS n FROM products WHERE yayinda`;
+  const [sayim] = await sql<{ urun: number; yayinda: number; kategori: number }[]>`
+    SELECT (SELECT count(*)::int FROM products)               AS urun,
+           (SELECT count(*)::int FROM products WHERE yayinda) AS yayinda,
+           (SELECT count(*)::int FROM categories)             AS kategori`;
   await sql.end();
 
-  console.log(`\n${"=".repeat(50)}`);
-  console.log(`${eklenen} ürün eklendi/güncellendi · toplam ${n} yayında ürün`);
-  console.log("Fiyatlar geçicidir — panelden düzeltilecek.\n");
+  console.log(`\n${"=".repeat(60)}`);
+  console.log(`${eklenen} ürün işlendi`);
+  if (!KURU) {
+    console.log(
+      `veritabanı: ${sayim.urun} ürün (${sayim.yayinda} yayında) · ${sayim.kategori} kategori`,
+    );
+  }
+  if (bosta.length) {
+    console.log(`\nkullanılmayan ham görsel (${bosta.length}):`);
+    bosta.forEach((f) => console.log(`  ${f}`));
+  }
+  console.log("\nFiyatlar geçicidir — panelden düzeltilecek.\n");
 }
 
 main().catch((e) => {
