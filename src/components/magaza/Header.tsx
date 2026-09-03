@@ -47,10 +47,11 @@ export function Header({
             <Image
               src="/marka/logo-yatay.png"
               alt={siteAdi}
-              width={1200}
-              height={300}
+              width={645}
+              height={219}
               priority
-              className="h-8 w-auto sm:h-9"
+              /* 64px'lik şeritte 40-44px: üstte altta nefes payı kalıyor. */
+              className="h-10 w-auto sm:h-11"
             />
           </Link>
 

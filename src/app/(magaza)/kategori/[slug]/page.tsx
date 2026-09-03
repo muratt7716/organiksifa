@@ -12,6 +12,14 @@ import {
 } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 
+/** Ürün sayfalarıyla aynı gerekçe — bkz. urun/[slug]/page.tsx */
+export const revalidate = 3600;
+
+export async function generateStaticParams() {
+  const kategoriler = await aktifKategoriler();
+  return kategoriler.map((k) => ({ slug: k.slug }));
+}
+
 export async function generateMetadata({
   params,
 }: {

@@ -73,9 +73,9 @@ export function Footer({
               <Image
                 src="/marka/logo-yatay.png"
                 alt={ayar.siteAdi}
-                width={1200}
-                height={300}
-                className="h-9 w-auto"
+                width={645}
+                height={219}
+                className="h-11 w-auto"
               />
             </Link>
 

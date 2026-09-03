@@ -20,10 +20,10 @@ export default function GirisSayfasi() {
           <Image
             src="/marka/logo-yatay.png"
             alt="Organik Şifa"
-            width={1200}
-            height={300}
+            width={645}
+            height={219}
             priority
-            className="h-10 w-auto"
+            className="h-12 w-auto"
           />
           <h1 className="sr-only">Organik Şifa yönetim paneli</h1>
           <p className="text-notr-600 text-sm">Yönetim paneline giriş yap</p>

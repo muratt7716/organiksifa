@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Check, Truck, ShieldCheck } from "lucide-react";
 import { UrunGaleri } from "@/components/magaza/UrunGaleri";
-import { urunDetay, benzerUrunler } from "@/lib/catalog";
+import { urunDetay, benzerUrunler, yayindakiUrunler } from "@/lib/catalog";
 import { urunYorumlari } from "@/actions/reviews";
 import { ayarlariGetir } from "@/lib/settings";
 import { fiyatBicimle, sayi, indirimYuzdesi } from "@/lib/price";
@@ -19,6 +19,26 @@ import {
 import { SepeteEkle } from "@/components/magaza/SepeteEkle";
 import { Yorumlar } from "@/components/magaza/Yorumlar";
 import { UrunKarti } from "@/components/magaza/UrunKarti";
+
+/**
+ * Ürün sayfaları derleme sırasında üretilir ve önbellekten servis edilir.
+ *
+ * Ölçüm (canlı): önbelleklenen /urunler 466 ms, önbelleklenmeyen ürün sayfası
+ * 2753 ms. Fark tamamen boşa gidiyordu — ürün sayfası her ziyarette sıfırdan
+ * üretiliyordu, oysa içeriği ancak ablam panelden değiştirince değişiyor.
+ *
+ * Panelde bir ürün kaydedildiğinde revalidatePath zaten çağrılıyor, yani
+ * değişiklik anında yansır. Aşağıdaki süre yalnızca emniyet kemeri.
+ *
+ * Listede olmayan bir slug istenirse (yeni eklenmiş ürün) sayfa o an üretilir
+ * ve sonrası için önbelleğe alınır — dynamicParams varsayılan olarak açık.
+ */
+export const revalidate = 3600;
+
+export async function generateStaticParams() {
+  const urunler = await yayindakiUrunler();
+  return urunler.map((u) => ({ slug: u.slug }));
+}
 
 export async function generateMetadata({
   params,

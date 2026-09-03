@@ -48,9 +48,9 @@ export function PanelNav({
         <Image
           src="/marka/logo-yatay.png"
           alt="Organik Şifa"
-          width={1200}
-          height={300}
-          className="h-7 w-auto"
+          width={645}
+          height={219}
+          className="h-9 w-auto"
         />
       </div>
       <ul className="flex md:flex-col md:p-2 md:gap-0.5">
