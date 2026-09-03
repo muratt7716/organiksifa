@@ -47,6 +47,28 @@ no marketing badges.
 
 ---
 
+### Neden ambalajda yazı yok
+
+İki sebep:
+
+1. **AI yazıyı bozuk üretiyor.** "PROBİYOTİK" isteyince "PROBIYOTIIK" ya da
+   anlamsız harfler çıkıyor, Türkçe karakterlerde daha da beter. Bozuk yazılı
+   etiket, etiketsiz kaptan kötü durur.
+2. **Referans görsellerdeki etiketler başka firmalara ait** (Probitox,
+   Şifaver, Dermolif, NÖVLEX, GENIXIR). Birebir üretmek onların markasını
+   bizim ürün sayfamıza koymak olurdu.
+
+**Ama kural her kap için aynı işlemiyor.** Amber kavanoz etiketsiz de sade
+durur. Beyaz takviye şişesini tanımlayan şey ise etiketidir — etiketi
+kaldırınca "etiketi düşmüş" görünür. O tür kaplarda yazı yerine **renk,
+kapak ve kabartmayla** kimlik veriliyor (bkz. 05).
+
+İleride istersen görselleri boş üretip **etiketi kendimiz basabiliriz** —
+`sharp` ile kendi tipografimizle net ve doğru Türkçe metin eklenir. Daha
+çok iş ama sonucu gerçek ürün fotoğrafı olur.
+
+---
+
 ## Kaydetme
 
 ```
@@ -101,19 +123,26 @@ görselin üzerine yazıyor, panelde ayrıca bir şey yapmana gerek yok.
 
 ---
 
-## 05 · Probiyotik Konsantre İçecek — YENİDEN
+## 05 · Probiyotik Konsantre İçecek — YENİDEN (2. deneme)
 
-Sorun: bembeyaz düz şişe boş kap gibi duruyor. Çözüm: kahraman artık
-**içecek**, şişe arkada destek.
+İlk denemede beyaz düz şişe **boş kap** gibi durdu. Sebep: beyaz takviye
+şişesini tanımlayan şey etiketidir; etiketi kaldırınca "etiketi düşmüş"
+görünüyor. Amber kavanozda bu sorun yok — o etiketsiz de sade durur.
+
+Çözüm: şişeye **yazı yerine renk ve biçim kimliği** ver. Koyu amber gövde,
+renkli kapak, kabartma halkalar. Etiketsiz ama bilerek tasarlanmış görünür.
 
 ```text
 A tall clear drinking glass filled with deep cranberry-red probiotic drink,
-condensation beading on the outside of the glass, standing on a pale white
+condensation beading down the outside, standing on a pale white marble
 surface. Behind it and slightly to the right, softly out of focus, stands a
-matte white plastic bottle with a ribbed white screw cap — completely blank,
-no label, no print. Three fresh red cranberries and two small glossy green
-leaves scattered at the base of the glass. Bright airy daylight from the
-left, clean shadows. The drink is the hero; the bottle is supporting context.
+tall supplement bottle in warm amber-brown HDPE plastic with subtle moulded
+horizontal ribbing around its shoulder and a matte forest-green screw cap.
+The bottle is completely blank — no label, no text, no logo — but its amber
+color, ribbed shoulder and green cap give it a designed identity, so it does
+not read as an empty unlabelled container. Three fresh red cranberries and
+two small glossy green leaves at the base of the glass. Bright airy daylight
+from the left, clean soft shadows. The drink is the hero.
 ```
 
 ---
