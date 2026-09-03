@@ -36,9 +36,21 @@ const BEKLEYENLER = TUMU.filter((u) => u.beklet);
 
 /**
  * Katalogdan tamamen çıkarılanlar — canlıda varsa silinir.
- * `altin-yag-2`: ilk kurulumdan kalma, açıklaması boş, kapağı yok.
+ *
+ * `altin-yag-2`
+ *   İlk kurulumdan kalma. Açıklaması boş, kapak görseli yok, üstelik ana
+ *   sayfa vitrinindeydi.
+ *
+ * `zeytin-yapragi-adacayi-bitki-cayi`
+ *   GERÇEK ÜRÜN DEĞİL. Panel akışını denemek için uydurduğum test ürünü;
+ *   eski yükleme betiğinde `klasor: "test-urun"` olarak geçiyordu. Ablamın
+ *   gönderdiği ham görsellerde karşılığı yok.
  */
-const SILINECEK_SLUGLAR = ["altin-yag-2", ...BEKLEYENLER.map((u) => u.slug)];
+const SILINECEK_SLUGLAR = [
+  "altin-yag-2",
+  "zeytin-yapragi-adacayi-bitki-cayi",
+  ...BEKLEYENLER.map((u) => u.slug),
+];
 
 const KOK = path.join(import.meta.dirname, "..");
 const KOVA = "urunler";

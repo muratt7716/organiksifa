@@ -35,6 +35,18 @@ Bu sekizinin elimizdeki tek görseli sunuma hazır değil. Promptları
 |---|---|
 | `altin-yag-karisimi-50ml` | Katalogda `d-vitamini-altin-yag-karisimi` olarak zaten var; o kaydın üç adet showroom görseli bulunuyor. İkisi aynı ürün. |
 
+## Gerçek ürün olmadığı için silinen (2)
+
+| Slug | Sebep |
+|---|---|
+| `zeytin-yapragi-adacayi-bitki-cayi` | **Uydurma test ürünü.** Panel akışını denemek için oluşturmuştum; eski yükleme betiğinde `klasor: "test-urun"` olarak geçiyordu. Ablamın gönderdiği ham görsellerde karşılığı yok. |
+| `altin-yag-2` | İlk kurulumdan kalma bozuk kayıt. Açıklaması boş, kapak görseli yok, üstelik ana sayfa vitrinindeydi. |
+
+**Kalan 4 eski kayıt gerçek ürün** — ablanın 2 Eylül'de gönderdiği
+fotoğraflardan üretilmişti, üçer showroom görselleri var:
+`d-vitamini-altin-yag-karisimi`, `hucre-yenileyici-merhem`,
+`dogal-bakim-seti`, `zayiflama-ve-detoks-seti`.
+
 ---
 
 ## Ambalajı düzeltilecek (6) — sitede, ama kapağı infografik
@@ -79,7 +91,8 @@ A bölümünde, `10`–`15` numaralarda.
 | | Adet |
 |---|---|
 | Katalogda tanımlı | 105 |
-| Sitede yayında | **101** |
+| Sitede yayında | **100** |
 | Görsel bekliyor | 8 |
 | Mükerrer, çıkarıldı | 1 |
+| Uydurma/bozuk, silindi | 2 |
 | Listelenmiyor | 1 (Sara-Epilepsi) |
