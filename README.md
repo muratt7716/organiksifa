@@ -37,6 +37,7 @@ npm run demo         # 3. terminal — site
 | `docs/ORTAM-DEGISKENLERI.md` | `.env.local` içeriği ve Vercel değişkenleri |
 | `supabase/kurulum.sql` | **SQL Editor'a yapıştırılacak tek dosya** |
 | `YAYIN-ONCESI-KONTROL.md` | Yayına çıkmadan önce tamamlanacaklar |
+| `YAPILACAKLAR.md` | **Henüz yazılmamış işler** — sipariş takibi, Telegram, PayTR |
 | `docs/GORSEL-REHBERI.md` | Ürün fotoğrafı hazırlama, AI ile görsel üretimi |
 | `docs/PAYTR-ENTEGRASYON.md` | Sanal POS'a geçiş noktaları |
 | `docs/superpowers/specs/` | Tasarım dokümanı (neden böyle yapıldı) |

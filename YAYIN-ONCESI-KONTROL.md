@@ -3,6 +3,9 @@
 Site gerçek müşteriye açılmadan önce bu listenin tamamı tamamlanmalı.
 Kutulara tik atarak ilerle.
 
+Henüz **yazılmamış** işler burada değil, [`YAPILACAKLAR.md`](YAPILACAKLAR.md)
+dosyasında.
+
 ---
 
 ## Altyapı
@@ -65,7 +68,7 @@ Kutulara tik atarak ilerle.
 
 ## Teknik doğrulama
 
-- [ ] `npm test` → 41 test geçiyor
+- [ ] `npm test` → 52 test geçiyor
 - [ ] `npm run test:e2e` → 70 test geçiyor
 - [ ] `npm run build` → hatasız
 - [ ] Lighthouse mobil: Performans ≥ 90, Erişilebilirlik ≥ 95
