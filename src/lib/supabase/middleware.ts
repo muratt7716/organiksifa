@@ -78,6 +78,15 @@ export async function oturumYenile(request: NextRequest) {
    */
   const oturumCereziVar = oturumCereziVarMi(request.cookies.getAll());
 
+  /**
+   * ÖLÇÜM: getUser() Supabase kimlik sunucusuna ağ üzerinden gidiyor ve bu
+   * PANEL İSTEĞİ BAŞINA bir kez oluyor. Süresi Server-Timing başlığıyla
+   * yanıta yazılıyor; tarayıcının ağ sekmesinden görülebilir.
+   *
+   * "Sayfa 1.8 sn sürüyor" bilgisi tek başına yetmiyordu — bu başlık,
+   * sürenin ne kadarının proxy'de geçtiğini kesin olarak söylüyor.
+   */
+  const t0 = Date.now();
   let user = null;
   try {
     const sonuc = await supabase.auth.getUser();
@@ -85,17 +94,26 @@ export async function oturumYenile(request: NextRequest) {
   } catch {
     user = null;
   }
+  const authSuresi = Date.now() - t0;
+
+  const olcumEkle = (r: NextResponse) => {
+    r.headers.set(
+      "Server-Timing",
+      `proxyauth;dur=${authSuresi};desc="supabase getUser"`,
+    );
+    return r;
+  };
 
   if (!giristeMi && !user && !oturumCereziVar) {
     const url = request.nextUrl.clone();
     url.pathname = "/panel/giris";
-    return NextResponse.redirect(url);
+    return olcumEkle(NextResponse.redirect(url));
   }
 
   if (giristeMi && user) {
     const url = request.nextUrl.clone();
     url.pathname = "/panel";
-    return NextResponse.redirect(url);
+    return olcumEkle(NextResponse.redirect(url));
   }
 
   // Doğrulanmış kullanıcıyı aşağı geçir: yerleşim tekrar sormasın.
@@ -105,5 +123,5 @@ export async function oturumYenile(request: NextRequest) {
     response = NextResponse.next({ request });
   }
 
-  return response;
+  return olcumEkle(response);
 }
