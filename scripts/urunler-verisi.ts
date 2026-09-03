@@ -34,6 +34,16 @@ export type UrunTanimi = {
   infografik: string;
   /** urun-gorselleri/ içindeki showroom görseli (kapak). Yoksa infografik kapak olur. */
   showroom?: string;
+  /**
+   * Görseli sunuma hazır değil — siteye ŞİMDİLİK konmaz.
+   *
+   * Bu ürünlerin elimizdeki tek görseli telefon ekran görüntüsü, emoji
+   * çıkartmalı ya da içinde sohbet ekranı olan bir kare. Showroom görseli
+   * üretilince bayrak kaldırılıp yüklenecek.
+   *
+   * Yükleme betiği bunları atlar ve canlıda varsa siler.
+   */
+  beklet?: boolean;
 };
 
 const H = "WhatsApp Image 2026-09-03 at";
@@ -216,7 +226,6 @@ Kullanım: İhtiyaç duyulan bölgeye ince bir tabaka hâlinde uygulayın.
 
 Hacim: 110 ml.${HARICI_NOT}`,
     infografik: `${H} 02.08.47 (3).jpeg`,
-    showroom: "10-aynisefa-macun.jpg",
   },
   {
     slug: "sivilce-kremi",
@@ -232,7 +241,6 @@ Kullanım: Temiz cilde günde 1-2 kez ince bir tabaka hâlinde uygulayın. Cildi
 
 Paraben, sülfat ve renklendirici içermez. Tüm cilt tiplerine uygundur.${HARICI_NOT}`,
     infografik: `${H} 02.08.49.jpeg`,
-    showroom: "11-sivilce-kremi.jpg",
   },
   {
     slug: "goz-alti-bakim-kremi",
@@ -249,7 +257,6 @@ Kullanım: Temiz cilde parmak uçlarıyla hafifçe vurarak uygulayın; sabah ve 
 
 Paraben, sülfat ve renklendirici içermez.${HARICI_NOT}`,
     infografik: `${H} 02.08.49 (10).jpeg`,
-    showroom: "12-goz-alti-morluk-kremi.jpg",
   },
   {
     slug: "dogal-gunes-kremi",
@@ -263,7 +270,6 @@ Kullanım: Güneşe çıkmadan yaklaşık 30 dakika önce uygulayın, gün için
 
 Paraben ve kimyasal katkı içermez.${HARICI_NOT}`,
     infografik: `${H} 02.08.48 (2).jpeg`,
-    showroom: "13-dogal-gunes-kremi.jpg",
   },
   {
     slug: "tras-sonrasi-bakim-kremi",
@@ -277,7 +283,6 @@ Kullanım: Yüzü ılık su ile yıkayıp kuruladıktan sonra nazikçe uygulayı
 
 Paraben ve alkol içermez. Tüm cilt tiplerine uygundur.${HARICI_NOT}`,
     infografik: `${H} 02.08.49 (3).jpeg`,
-    showroom: "14-tras-sonrasi-krem.jpg",
   },
   {
     slug: "pisik-kremi",
@@ -293,7 +298,6 @@ Kullanım: Temiz ve kuru cilde her bez değişiminde ince bir tabaka hâlinde uy
 
 Paraben, sülfat ve renklendirici içermez. Dermatolojik olarak test edilmiştir.${HARICI_NOT}`,
     infografik: `${H} 02.08.48 (5).jpeg`,
-    showroom: "15-pisik-kremi.jpg",
   },
   {
     slug: "ton-esitleyici-krem",
@@ -311,6 +315,7 @@ Tüm cilt tiplerine uygundur, nemlendirir ve besler.${HARICI_NOT}`,
   },
   {
     slug: "anti-aging-serum",
+    beklet: true,
     baslik: "Anti-Aging Bakım Serumu",
     orijinalAd: "Anti Aging Kırışıklık & Leke Giderici Serum",
     kategoriSlug: "cilt-bakimi",
@@ -321,7 +326,8 @@ Tüm cilt tiplerine uygundur, nemlendirir ve besler.${HARICI_NOT}`,
 Kullanım: Temizlenmiş cilde birkaç damla uygulayıp nazikçe yedirin. Ardından nemlendirici kullanılabilir.
 
 Damlalıklı şişe.${HARICI_NOT}`,
-    infografik: `${H} 02.05.27 (3).jpeg`,
+    // 3 Eylül partisinde daha temiz, tek ürünlü versiyonu geldi.
+    infografik: `${H} 16.47.05 (4).jpeg`,
   },
   {
     slug: "rusur-tasi-kremi",
@@ -529,6 +535,7 @@ Kullanım: Şampuanı saç derisine masaj yaparak uygulayın, 2-3 dakika bekleti
   },
   {
     slug: "istah-ve-kilo-destek-seti",
+    beklet: true,
     baslik: "İştah ve Kilo Destek Seti",
     orijinalAd: "Kilo Aldırıcı Set",
     kategoriSlug: "setler",
@@ -542,6 +549,7 @@ Kullanım: Macunu sabah ve akşam aç karnına 1 tatlı kaşığı; karadut öz�
   },
   {
     slug: "selulit-catlak-bakim-seti",
+    beklet: true,
     baslik: "Selülit & Çatlak Bakım Seti",
     kategoriSlug: "setler",
     fiyat: "980.00",
@@ -594,6 +602,7 @@ Sentetik katkı, paraben, alkol ve kimyasal madde içermez. Hayvanlar üzerinde 
   },
   {
     slug: "tuy-bakim-seti",
+    beklet: true,
     baslik: "Tüy Bakım Seti",
     orijinalAd: "Tüy Dökücü ve Bitirici Set",
     kategoriSlug: "setler",
@@ -856,6 +865,8 @@ En az 4-6 hafta düzenli kullanım önerilir.${SET_NOT}`,
     aciklama: `Yedi parçalık set. Hassas ciltlerin günlük bakımı için harici ürünler ile bitkisel takviyelerden oluşur.
 
 Kullanım: Bakım serumunu ve kremini temiz cilde ince tabaka hâlinde uygulayın. Katran sabunuyla bölgeyi nazikçe yıkayın. Kombu detoks çayı ve macunu etiketindeki öneriye göre tüketin.${HARICI_NOT}${SET_NOT}`,
+    // DÜZELTME: 16.47.01 (2) sanıldığı gibi Egzama seti değil, EKLEM SETİ.
+    // Tek tek doğrulanınca yakalandı; kendi görseline geri alındı.
     infografik: `${H} 02.08.50 (10).jpeg`,
   },
   {
@@ -889,6 +900,7 @@ Kimyasal içermez. Vegan. Çevre dostu.`,
   },
   {
     slug: "cocuk-ve-genc-gelisim-destek-seti",
+    beklet: true,
     baslik: "Çocuk ve Genç Gelişim Destek Seti",
     orijinalAd: "Boy Uzatıcı Set",
     kategoriSlug: "setler",

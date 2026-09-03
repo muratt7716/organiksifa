@@ -24,7 +24,21 @@ import path from "node:path";
 import sharp from "sharp";
 import postgres from "postgres";
 import { createClient } from "@supabase/supabase-js";
-import { URUNLER } from "./urunler-verisi";
+import { URUNLER as URUNLER_1 } from "./urunler-verisi";
+import { URUNLER_2 } from "./urunler-verisi-2";
+
+/** İki parti birlikte yüklenir; slug tekrarı ön kontrolde yakalanır. */
+const TUMU = [...URUNLER_1, ...URUNLER_2];
+
+/** Görseli hazır olmayanlar siteye konmaz (bkz. UrunTanimi.beklet). */
+const URUNLER = TUMU.filter((u) => !u.beklet);
+const BEKLEYENLER = TUMU.filter((u) => u.beklet);
+
+/**
+ * Katalogdan tamamen çıkarılanlar — canlıda varsa silinir.
+ * `altin-yag-2`: ilk kurulumdan kalma, açıklaması boş, kapağı yok.
+ */
+const SILINECEK_SLUGLAR = ["altin-yag-2", ...BEKLEYENLER.map((u) => u.slug)];
 
 const KOK = path.join(import.meta.dirname, "..");
 const KOVA = "urunler";
@@ -41,6 +55,7 @@ const KATEGORILER: { slug: string; ad: string; sira: number }[] = [
   { slug: "sabun-temizlik", ad: "Sabun & Temizlik", sira: 7 },
   { slug: "anne-bebek", ad: "Anne & Bebek", sira: 8 },
   { slug: "agiz-dis", ad: "Ağız & Diş", sira: 9 },
+  { slug: "ev-koku", ad: "Ev & Koku", sira: 10 },
 ];
 
 /** Görseli WebP'ye çevirir, ölçüsünü ve kenar zemin rengini döndürür. */
@@ -90,7 +105,15 @@ async function main() {
   }
 
   console.log(`\nHedef: ${new URL(dbUrl).host}`);
-  console.log(`${URUNLER.length} ürün tanımı${KURU ? "  (KURU ÇALIŞTIRMA)" : ""}\n`);
+  console.log(
+    `${URUNLER.length} ürün yüklenecek · ${BEKLEYENLER.length} bekletiliyor` +
+      `${KURU ? "  (KURU ÇALIŞTIRMA)" : ""}\n`,
+  );
+  if (BEKLEYENLER.length) {
+    console.log("BEKLETİLENLER (görseli hazır değil, siteye konmayacak):");
+    BEKLEYENLER.forEach((u) => console.log(`  ${u.slug}`));
+    console.log("");
+  }
 
   /* ---- Ön kontrol: dosyalar yerinde mi, slug tekrarı var mı? ---- */
   const hatalar: string[] = [];
@@ -126,6 +149,18 @@ async function main() {
 
   const sql = postgres(dbUrl, { prepare: false, max: 1 });
   const depo = createClient(sbUrl, sbKey, { auth: { persistSession: false } });
+
+  /* ---- Siteden çıkarılacaklar ---- */
+  if (!KURU && SILINECEK_SLUGLAR.length) {
+    const silinen = await sql<{ slug: string }[]>`
+      DELETE FROM products WHERE slug IN ${sql(SILINECEK_SLUGLAR)}
+      RETURNING slug`;
+    if (silinen.length) {
+      console.log(`siteden çıkarıldı (${silinen.length}):`);
+      silinen.forEach((r) => console.log(`  ${r.slug}`));
+      console.log("");
+    }
+  }
 
   /* ---- Kategoriler ---- */
   if (!KURU) {

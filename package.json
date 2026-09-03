@@ -15,7 +15,6 @@
     "dogrula": "tsx scripts/kurulum-dogrula.ts",
     "sql:dogrula": "tsx scripts/sql-dogrula.ts",
     "temizle": "tsx scripts/test-verisi-temizle.ts",
-    "urun:yukle": "tsx scripts/urun-yukle.ts",
     "demo:db": "tsx scripts/demo-db.ts",
     "demo:yukle": "cross-env DATABASE_URL=postgresql://postgres@127.0.0.1:5433/postgres tsx scripts/demo-hazirla.ts",
     "demo": "cross-env DEMO_MODU=1 DATABASE_URL=postgresql://postgres@127.0.0.1:5433/postgres next dev",
@@ -23,7 +22,10 @@
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "db:seed": "tsx src/db/seed.ts"
+    "db:seed": "tsx src/db/seed.ts",
+    "urun:yukle": "tsx scripts/urun-yukle-toplu.ts",
+    "denetle": "tsx scripts/katalog-denetle.ts",
+    "hazirlik": "tsx scripts/hazirlik-kontrol.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.5",
